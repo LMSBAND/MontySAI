@@ -92,6 +92,55 @@ class Bird:
         return np.where(active, np.sin(phase) * np.sin(np.pi * u), 0.0)
 
 
+class WavVoice:
+    """A recorded take as a voice: Bryan's hands, attached to an
+    object. The file plays on loop (the take's own silence gaps
+    included -- rests are part of a riff). Nearest the physics can
+    tell, this is the only voice in the zoo that ever touched a
+    string.
+
+    Pickling: Monty saves its whole config beside every trained
+    model, and a config carrying minutes of float64 audio would bloat
+    every checkpoint. __getstate__ therefore stores only the path and
+    parameters; the samples reload on unpickle. The path is the
+    identity; the audio is the cache."""
+
+    def __init__(self, path: str, level: float = 1.0) -> None:
+        self.path = path
+        self.level = level
+        self._load()
+
+    def _load(self) -> None:
+        from scipy.io import wavfile
+        sr, x = wavfile.read(self.path)
+        if x.dtype.kind == "i":
+            x = x.astype(np.float64) / np.iinfo(x.dtype).max
+        else:
+            x = x.astype(np.float64)
+        if x.ndim == 2:
+            x = x.mean(axis=1)
+        if sr != 44100:
+            raise ValueError(f"{self.path}: {sr} Hz; resample to 44100 "
+                             "-- the ear does not bend")
+        peak = np.abs(x).max()
+        self._samples = (x / peak * 0.5 * self.level) if peak > 0 else x
+        self._sr = float(sr)
+        self._dur = len(x) / self._sr
+
+    def __getstate__(self):
+        return {"path": self.path, "level": self.level}
+
+    def __setstate__(self, state):
+        self.path = state["path"]
+        self.level = state["level"]
+        self._load()
+
+    def __call__(self, t: np.ndarray) -> np.ndarray:
+        pos = np.mod(t, self._dur) * self._sr
+        return np.interp(pos, np.arange(len(self._samples)),
+                         self._samples)
+
+
 # aliases for callers written against the factory-function API
 drone = Drone
 siren = Siren

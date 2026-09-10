@@ -1,0 +1,47 @@
+# @package _global_
+# TEST 11: REAL HANDS. Two YCB objects voiced by Bryan's takes --
+# the mug plays Minor Swing in A minor, the banana plays For
+# Sentimental Reasons. Same guitar, same register, same player:
+# nothing separates them but the shape of the playing.
+defaults:
+  - /monty: graph_exp1000_e3_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: displacement_1lm
+  - /monty/sensor_module: audio
+  - /monty/connectivity: 1lm_1audio
+  - /environment: audio_mujoco_noop
+  - /env_interface: audio_train_2sounds
+  - /env_interface/transform: none
+  - /logging: silent_warning_train
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.pretraining_experiments.MontySupervisedObjectPretrainingExperiment
+  config:
+    show_sensor_output: false
+    # 64 steps x 0.25 s = 16 s of listening per object: at least one
+    # full pass of the phrase plus change, gaps included.
+    max_train_steps: 64
+    max_eval_steps: 10
+    max_total_steps: 400
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ""
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: all
+    environment:
+      env_init_args:
+        voices:
+          mug:
+            _target_: audiomonty.voices.WavVoice
+            path: ${path.expanduser:"~/Desktop/chords/django/MSWING_AM.wav"}
+          banana:
+            _target_: audiomonty.voices.WavVoice
+            path: ${path.expanduser:"~/Desktop/chords/django/FOIL.wav"}
+    logging:
+      run_name: audio_pretrain_riffs
+    monty_config:
+      monty_args:
+        num_exploratory_steps: 64

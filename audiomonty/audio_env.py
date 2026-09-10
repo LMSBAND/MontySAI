@@ -94,6 +94,13 @@ class AudioEnvironment:
     def remove_all_objects(self):
         self._inner.remove_all_objects()
         self._scene.remove_all()
+        # New episode, new needle-drop: the take starts from its top.
+        # Without this the scene clock runs on across episodes and
+        # every episode hears a DIFFERENT slice of the recording --
+        # measured on the riff evals as the same take flipping between
+        # correct and confused depending on which run preceded it.
+        # An experimenter presses play at the beginning.
+        self._scene._clock = 0
 
 
 class AudioMuJoCoEnvironment(AudioEnvironment):

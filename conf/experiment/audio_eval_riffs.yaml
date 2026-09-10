@@ -1,0 +1,45 @@
+# @package _global_
+# TEST 11 EVAL. Which tune is this? Default asks with the training
+# takes (control). The interesting conditions come via CLI override
+# of the mug's voice:
+#   experiment.config.environment.env_init_args.voices.mug.path=...MSWING_CM.wav
+#     -> transposition, on real hands
+#   ...MSWING_MAJ.wav
+#     -> the mode question: is major/minor identity, or pose?
+defaults:
+  - /monty: evidencegraph_exp1000_emin_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: evidence_audio
+  - /monty/sensor_module: audio
+  - /monty/connectivity: 1lm_1audio
+  - /environment: audio_mujoco_noop
+  - /env_interface: audio_eval_2sounds
+  - /env_interface/transform: none
+  - /logging: basic_info_monty_runs
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.object_recognition_experiments.MontyObjectRecognitionExperiment
+  config:
+    show_sensor_output: false
+    max_train_steps: 64
+    max_eval_steps: 100
+    max_total_steps: 500
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ${path.expanduser:"~/tbp/results/monty/pretrained_models/my_trained_models/audio_pretrain_riffs/pretrained"}
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: []
+    environment:
+      env_init_args:
+        voices:
+          mug:
+            _target_: audiomonty.voices.WavVoice
+            path: ${path.expanduser:"~/Desktop/chords/django/MSWING_AM.wav"}
+          banana:
+            _target_: audiomonty.voices.WavVoice
+            path: ${path.expanduser:"~/Desktop/chords/django/FOIL.wav"}
+    logging:
+      run_name: audio_eval_riffs
