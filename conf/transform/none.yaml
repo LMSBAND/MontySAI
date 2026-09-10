@@ -1,0 +1,4 @@
+# @package experiment.config.environment
+# The ear takes its observation raw. Camera transform pipelines
+# (depth-to-3D etc.) have nothing to do for a waveform.
+transform: null

@@ -1,0 +1,13 @@
+[project]
+name = "audiomonty"
+version = "0.1.0"
+description = "The SAI as Monty's first auditory sensor: CARFAC ear, acoustic MuJoCo worlds, audio sensor module"
+requires-python = ">=3.10"
+dependencies = ["numpy"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["audiomonty"]

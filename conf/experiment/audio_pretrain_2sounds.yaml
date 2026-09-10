@@ -1,0 +1,41 @@
+# @package _global_
+# THE FIRST AUDITORY OBJECTS. Two YCB objects with voices -- a mug
+# that hums (147 Hz drone: a point in auditory space) and a banana
+# that wails (110-220 Hz siren: a trajectory). Supervised pretraining
+# builds one graph per object out of AudioSM percepts. The agent is a
+# NoopAgent and the motor policy's actions are absorbed as no-ops:
+# the listener sits still, and movement through the object is the
+# sound's own evolution.
+defaults:
+  - /monty: graph_exp1000_e3_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: displacement_1lm
+  - /monty/sensor_module: audio
+  - /monty/connectivity: 1lm_1audio
+  - /environment: audio_mujoco_noop
+  - /env_interface: audio_train_2sounds
+  - /env_interface/transform: none
+  - /logging: silent_warning_train
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.pretraining_experiments.MontySupervisedObjectPretrainingExperiment
+  config:
+    show_sensor_output: false
+    # 40 exploratory steps x 0.25 s = 10 s of listening per episode:
+    # three passes of the siren's period, an eternity of drone.
+    max_train_steps: 40
+    max_eval_steps: 10
+    max_total_steps: 200
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ""
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: all
+    logging:
+      run_name: audio_pretrain_2sounds
+    monty_config:
+      monty_args:
+        num_exploratory_steps: 40

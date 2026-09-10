@@ -94,3 +94,27 @@ class AudioEnvironment:
     def remove_all_objects(self):
         self._inner.remove_all_objects()
         self._scene.remove_all()
+
+
+class AudioMuJoCoEnvironment(AudioEnvironment):
+    """Hydra-friendly: constructs the MuJoCoSimulator itself, so an
+    /environment yaml can name ONE env_init_func and pass everything
+    flat -- audio kwargs for the wrapper, the rest straight through to
+    MuJoCo. Keeps the yaml the same shape as mujoco_ycb_noop_agent."""
+
+    def __init__(
+        self,
+        voices: dict,
+        listener_agent_id: str = "agent_id_0",
+        sample_rate: float = 44100.0,
+        step_seconds: float = 0.25,
+        **mujoco_kwargs,
+    ) -> None:
+        from tbp.monty.simulators.mujoco.simulator import MuJoCoSimulator
+        super().__init__(
+            inner=MuJoCoSimulator(**mujoco_kwargs),
+            voices=voices,
+            listener_agent_id=listener_agent_id,
+            sample_rate=sample_rate,
+            step_seconds=step_seconds,
+        )

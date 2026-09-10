@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: audiomonty
+Version: 0.1.0
+Summary: The SAI as Monty's first auditory sensor: CARFAC ear, acoustic MuJoCo worlds, audio sensor module
+Requires-Python: >=3.10
+Requires-Dist: numpy

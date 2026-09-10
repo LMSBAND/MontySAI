@@ -48,8 +48,18 @@ from . import sai_ref as R
 from .audio_env import AUDIO_SENSOR_ID
 from .ear import Ear
 
-LAG_SCALE = 0.02      # meters per octave of lag
-CH_SCALE = 0.001      # meters per cochlear channel
+# THE MAGNIFICATION OF AUDITORY SPACE. Monty's machinery carries YCB
+# assumptions in its constants: graph dedup at 1 mm, match distance
+# 1 cm, max graph size 30 cm. An auditory frame has no intrinsic
+# meters, so we are free to print it at whatever scale makes those
+# constants sensible -- and obliged to, as the first pretraining run
+# proved: at 2 cm/octave a vibrato cluster was 0.6 mm wide, the 1 mm
+# dedup swallowed it whole, and the drone collapsed back into the
+# single point the vibrato existed to prevent. At 10 cm/octave a
+# 35-cent vibrato is a 3 mm cluster and a one-octave siren is a 10 cm
+# path: object-sized, by construction.
+LAG_SCALE = 0.1       # meters per octave of lag
+CH_SCALE = 0.004      # meters per cochlear channel
 SALIENCE_FLOOR = 1.6  # peak must beat this x the mean marginal to count
 
 
