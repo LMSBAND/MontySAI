@@ -62,3 +62,29 @@ when writing the SM; do not let it happen by accident.
    {observations, pose}, accepting {action}.
 3. Python adapter class implementing the Protocol; stock recognition
    experiment with Godot as the world = Stage 1 done.
+
+## Day zero outcome (same day, evening)
+
+Stage-0 DONE. `uv sync --extra dev --extra simulator_mujoco` works
+(their UV_PROTOTYPE.md undersells it; 5.3G venv, python 3.13).
+MuJoCo unit tests 51/52 (one Hypothesis deadline flake). YCB-for-MuJoCo
+data comes from the CI recipe, NOT the habitat downloader:
+
+    mkdir -p ~/tbp/data/mujoco/objects/ycb
+    curl -L https://tbp-data-public-5e789bd48e75350c.s3.us-east-2.amazonaws.com/tbp.monty/ycb_objects_1.0.tgz \
+      | tar -xzf - -C ~/tbp/data/mujoco/objects/ycb
+
+Then:
+
+    uv run python run.py experiment=tutorial/first_experiment_mujoco
+
+ran to completion: surface agent on a mug, graph built, model saved
+under ~/tbp/results/monty/pretrained_models/my_trained_models/.
+
+Also learned: every experiment is Hydra config groups; a Godot
+environment = a `/environment: godot_*` yaml + a GodotSimulator class
+implementing the same Protocol MuJoCoSimulator does (624 lines,
+src/tbp/monty/simulators/mujoco/simulator.py -- THE template).
+
+Next: the Godot side. Needs the wilderness project exhumed; then the
+socket server scene + GodotSimulator adapter.
