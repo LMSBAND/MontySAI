@@ -18,6 +18,14 @@ one call, because the Ibanez round wants the same cuts:
 Predictions on record for the solid-body session: octave-stacks
 survive the guitar swap (estimator, not box), centroid-drift shrinks
 (box gone), novel notes hold exactly (they are the music).
+
+Failure conditions, same record (via the other Fable): if the
+octave-stacks SHRINK, the estimator artifact was fed by the box and
+"mode-summoned" weakens. If centroid-drift does NOT shrink, the
+timbre change lives in the strings under major harmony and the box
+hypothesis dies. If the novel notes MOVE at all, the pitch pipeline
+is broken -- those are the notes that were played. Three predictions,
+three ways to be wrong, one recording session.
 """
 from __future__ import annotations
 
