@@ -37,6 +37,8 @@ class Ear:
         self._ib = np.zeros((self.n_ch, R.BUF))
         self._img = np.zeros((self.n_ch, R.S))
         self._pending = np.zeros((self.n_ch, 0))
+        self.nap_mean = np.zeros(self.n_ch)   # per-channel mean rectified
+                                              # NAP of the LAST chunk fed
 
     @property
     def image(self) -> np.ndarray:
@@ -53,6 +55,8 @@ class Ear:
         """
         naps, _, _, _, _ = C.run_segment(self.cfp, waveform[:, None])
         nap = naps[:, :, 0].T                       # [ch, time]
+        # timbre wants the whole chunk's sustain, not one strobe instant
+        self.nap_mean = np.maximum(nap, 0.0).mean(axis=1)
         self._pending = np.concatenate([self._pending, nap], axis=1)
 
         frames = []

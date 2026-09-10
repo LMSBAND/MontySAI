@@ -10,10 +10,15 @@ learning_module_0:
     audio:
       pitch_hz: 15.0
       place_centroid: 8.0
+      # timbre: log10 ratios of harmonics 2-5 to the fundamental,
+      # from the raw waveform. 0.4 per element ~= "within a factor
+      # of 2.5" -- same tone family across pick attack variation.
+      timbre: ${np.array:[0.4, 0.4, 0.4, 0.4]}
   feature_weights:
     audio:
       pitch_hz: 1.0
       place_centroid: 1.0
+      timbre: ${np.ones:4}
   x_percent_threshold: 20
   evidence_threshold_config: 80%
   gsg:

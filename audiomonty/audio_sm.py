@@ -79,7 +79,8 @@ class AudioSM:
         save_raw_obs: bool = False,
     ) -> None:
         self.sensor_module_id = sensor_module_id
-        self.features = ["pitch_hz", "level", "salience", "place_centroid"]
+        self.features = ["pitch_hz", "level", "salience", "place_centroid",
+                         "timbre"]
         self.save_raw_obs = save_raw_obs
         self._sample_rate = sample_rate
         self._ear = Ear(sample_rate)
@@ -181,6 +182,24 @@ class AudioSM:
         level = float(np.sqrt(np.mean(np.square(wave))))
         salience = float(mg[li] / (mean if mean > 0 else 1.0))
 
+        # TIMBRE: the vertical of the SAI, encoded like the finger
+        # encodes texture at a spot (Bryan's observation). Two design
+        # rules, learned the hard way and from the other Fable's memo:
+        # compress to a few PHYSICAL numbers (raw slices drown the
+        # path features in noise -- same reason you don't feed a
+        # compressor the raw FFT), and average over the note's
+        # sustain, not the strobe instant (or some nodes wear the
+        # attack and call it the horn). So: the mean NAP of this
+        # step's whole chunk, sampled AT the membrane places where
+        # harmonics 2..5 of the detected pitch live, as log-ratios to
+        # the fundamental's place. Four numbers. Level cancels in the
+        # ratio; pitch already has its own axis. The first binned-
+        # column attempt failed the selftest flat (silent channels'
+        # strobe-fallback floor + the AGC equalizing) -- sampling at
+        # harmonic places asks only the witnesses that matter.
+        timbre = _timbre_harmonics(np.asarray(wave, float), pitch,
+                                   self._sample_rate)
+
         return Message(
             location=location,
             morphological_features={
@@ -193,6 +212,7 @@ class AudioSM:
                 "level": level,
                 "salience": salience,
                 "place_centroid": ch_centroid,
+                "timbre": timbre,
             },
             confidence=float(min(salience / (2 * SALIENCE_FLOOR), 1.0)),
             pass_message=True,
@@ -200,6 +220,38 @@ class AudioSM:
             sender_type="SM",
             process_features_in_lm=True,
         )
+
+
+TIMBRE_HARMONICS = (2, 3, 4, 5)
+
+
+def _timbre_harmonics(wave: np.ndarray, pitch: float, sr: float
+                      ) -> np.ndarray:
+    """log10 of (harmonic k's band energy / the fundamental's), from
+    the step's RAW waveform, k = 2..5. Raw on purpose, and with
+    precedent: CameraSM computes curvature from raw depth, not from a
+    neural code -- the ear supplies WHERE (pitch, place), the raw
+    observation supplies WHAT. The NAP-based attempt measured flat:
+    the AGC equalizes spectra at full level and un-equalizes them at
+    low level, which is its job and timbre's ruin. Bands are +-4%
+    around k*pitch so vibrato stays inside its own harmonic; ratios
+    cancel level exactly; clip [-2, 1] because a harmonic 100x down
+    and an absent one are the same fact."""
+    spec = np.abs(np.fft.rfft(wave))
+    fbin = sr / len(wave)
+
+    def band(freq):
+        b0 = int(freq * 0.96 / fbin)
+        b1 = int(freq * 1.04 / fbin) + 1
+        return float(spec[max(b0, 0):min(b1, len(spec))].sum())
+
+    h1 = band(pitch)
+    if h1 <= 1e-12:
+        return np.zeros(len(TIMBRE_HARMONICS))
+    return np.array([
+        np.clip(np.log10(max(band(k * pitch), 1e-12) / h1), -2.0, 1.0)
+        for k in TIMBRE_HARMONICS
+    ])
 
 
 def _local_gradient(img: np.ndarray, ch: float, lag_i: int
