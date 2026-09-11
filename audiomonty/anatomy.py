@@ -37,7 +37,7 @@ from .voices import WavVoice
 SR = 44100.0
 STEP_S = 0.25
 MATCH_M = 0.01          # the LM's match radius
-PITCH_TOL_HZ = 15.0     # the LM's pitch tolerance
+PITCH_TOL_CENTS = 136   # = the old 15 Hz at the lived register (183 Hz), octave-invariant
 CENTS_NEAR = 40.0
 CENTS_FAR = 60.0
 CH_SCALE = 0.004
@@ -96,7 +96,8 @@ def decompose(stream: np.ndarray, nodes: np.ndarray,
         x, y, bp = row
         d = np.linalg.norm(nodes[:, :2] - [x, y], axis=1)
         j = int(d.argmin())
-        if d[j] <= MATCH_M and abs(bp - node_pitches[j]) <= PITCH_TOL_HZ:
+        if d[j] <= MATCH_M and abs(
+                1200 * np.log2(bp / node_pitches[j])) <= PITCH_TOL_CENTS:
             out["fit"].append(row)
             continue
         r1 = np.min(np.abs(1200 * np.log2(bp / node_pitches)))

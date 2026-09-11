@@ -79,8 +79,8 @@ class AudioSM:
         save_raw_obs: bool = False,
     ) -> None:
         self.sensor_module_id = sensor_module_id
-        self.features = ["pitch_hz", "level", "salience", "place_centroid",
-                         "timbre"]
+        self.features = ["pitch_hz", "pitch_semis", "level", "salience",
+                         "place_centroid", "timbre"]
         self.save_raw_obs = save_raw_obs
         self._sample_rate = sample_rate
         self._ear = Ear(sample_rate)
@@ -179,6 +179,7 @@ class AudioSM:
         pose_vectors = np.vstack([[0.0, 0.0, 1.0], dir1, dir2])
 
         pitch = self._sample_rate / lag
+        m = 69 + 12 * np.log2(pitch / 440.0)
         level = float(np.sqrt(np.mean(np.square(wave))))
         salience = float(mg[li] / (mean if mean > 0 else 1.0))
 
@@ -209,6 +210,12 @@ class AudioSM:
             },
             non_morphological_features={
                 "pitch_hz": float(pitch),
+                # pitch on a LOG scale, so a flat LM tolerance is the
+                # same number of CENTS in every octave. The Hz feature
+                # with a 15 Hz tolerance was 24 cents at C5 and 190 at
+                # C3 -- semitone-blind exactly where guitars live.
+                # Found by the duration-confound check, 2026-09-10.
+                "pitch_semis": float(m),
                 "level": level,
                 "salience": salience,
                 "place_centroid": ch_centroid,

@@ -8,7 +8,12 @@ learning_module_0:
   max_match_distance: 0.01
   tolerances:
     audio:
-      pitch_hz: 15.0
+      # UNIT SURGERY, width preserved: the old pitch_hz 15.0 equalled
+      # 136 cents at the register the takes lived in (median take
+      # pitch 183 Hz). Same nominal width there, octave-INVARIANT
+      # everywhere else. Only the unit changed; tuning the width is a
+      # different experiment, not run tonight.
+      pitch_semis: 1.362
       place_centroid: 8.0
       # timbre: log10 ratios of harmonics 2-5 to the fundamental,
       # from the raw waveform. 0.4 per element ~= "within a factor
@@ -16,7 +21,7 @@ learning_module_0:
       timbre: ${np.array:[0.4, 0.4, 0.4, 0.4]}
   feature_weights:
     audio:
-      pitch_hz: 1.0
+      pitch_semis: 1.0
       place_centroid: 1.0
       timbre: ${np.ones:4}
   x_percent_threshold: 20
