@@ -89,3 +89,26 @@ with the AGC open, the usable dynamic range between "inaudible" and
 - Impaired frequency selectivity and TFS sensitivity, envelope
   spared, in mild-moderate SNHL:
   https://pubs.aip.org/asa/jasa/article/146/6/4299/951580/
+
+---
+
+## OUTCOMES (run 2026-09-11, same afternoon as registration)
+
+Method as registered: healthy-trained memory (Minor Swing +
+Sentimental Reasons, real takes), lesioned listener at eval, plus a
+TIMBRE-BLIND learning module as the pathway control (the caveat
+above, made into a measurement). 24 full-percept runs + 16
+timbre-blind runs. Figure: figures/lesion_study.png.
+
+| prediction | outcome |
+|---|---|
+| P1 dead region: melody survives where human pitch quality dies | **CONFIRMED** — 400–800 Hz dead band, correct @21 even timbre-blind |
+| P2 channel-starvation cliff near the CI result | **REFUTED AS STATED, replaced with something sharper** — place starvation ALONE is benign down to 4 of 83 channels (the SAI lag axis pools survivors). The cliff needs the temporal code lesioned too: 8ch + tau×8 (the true CI condition, which starves BOTH codes) = no_match on the riff, hedge-to-timeout on the drone. The interval effect confirmed: the octave-wide siren survives the CI condition at 21 steps while the cluster-object hedges. |
+| P3 TFS loss fattens then breaks | **DIRECTION CONFIRMED** — tau×8 timbre-blind = confused; the smooth scatter-vs-tau curve and the tau×4/×8 non-monotonicity (full-percept runs) remain to be measured at percept level |
+| P4 OHC loss = threshold first | **OPEN** — benign at performance level down to ×0.1 undamping; the quiet-level threshold sweep is still owed |
+| caveat: raw-observation timbre masks ear damage | **VALIDATED EMPIRICALLY** — tau×8 reads correct with timbre, confused without. Lesion studies in this system must run timbre-blind. |
+
+Headline: **pitch identity rides two redundant codes — place and
+time. Either alone suffices; the temporal code is load-bearing for
+melody; both gone (the implant condition) is melody-deafness,
+matching the human FMI collapse.**

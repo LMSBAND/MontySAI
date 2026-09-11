@@ -77,20 +77,31 @@ class AudioSM:
         sensor_module_id: str = AUDIO_SENSOR_ID,
         sample_rate: float = 44100.0,
         save_raw_obs: bool = False,
+        lesion: dict | None = None,
     ) -> None:
+        """lesion: kwargs for lesions.LesionedEar (dead_band,
+        undamping_scale, ihc_tau_scale, keep_channels, open_loop).
+        None = healthy ear. See docs/damaged_ear_predictions.md."""
         self.sensor_module_id = sensor_module_id
         self.features = ["pitch_hz", "pitch_semis", "level", "salience",
                          "place_centroid", "timbre"]
         self.save_raw_obs = save_raw_obs
         self._sample_rate = sample_rate
-        self._ear = Ear(sample_rate)
+        self._lesion = dict(lesion) if lesion else None
+        self._ear = self._make_ear()
         self.state: SensorState | None = None
         self.is_exploring = False
         self.processed_obs: list[dict[str, Any]] = []
 
     # ------------------------------------------------------------------
+    def _make_ear(self):
+        if self._lesion:
+            from .lesions import LesionedEar
+            return LesionedEar(self._sample_rate, **self._lesion)
+        return Ear(self._sample_rate)
+
     def reset(self) -> None:
-        self._ear = Ear(self._sample_rate)
+        self._ear = self._make_ear()
         self.processed_obs = []
         self.is_exploring = False
 

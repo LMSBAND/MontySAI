@@ -1,0 +1,25 @@
+# @package experiment.config.monty_config.learning_modules
+# Timbre-blind variant: the lesion-study control. Timbre is computed
+# from the RAW observation and bypasses a lesioned ear, so with it in
+# play a lesion study measures the wrong pathway. This LM sees only
+# what came THROUGH the cochlea: location and place.
+learning_module_0:
+  _target_: tbp.monty.frameworks.models.evidence_matching.learning_module.EvidenceGraphLM
+  max_match_distance: 0.01
+  tolerances:
+    audio:
+      pitch_semis: 1.362
+      place_centroid: 8.0
+  feature_weights:
+    audio:
+      pitch_semis: 1.0
+      place_centroid: 1.0
+  x_percent_threshold: 20
+  evidence_threshold_config: 80%
+  gsg:
+    _target_: tbp.monty.frameworks.models.goal_generation.EvidenceGoalGenerator
+    goal_tolerances:
+      location: 0.015
+    min_post_goal_success_steps: 5
+  hypotheses_updater_args:
+    max_nneighbors: 10
