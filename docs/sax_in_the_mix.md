@@ -41,3 +41,23 @@ runner-up extraction is the gate. The self-correlation result adds a
 second requirement: breaking the song-confound needs a
 source-specific feature at the probed lag (timbre-at-lag), not
 timing alone.
+
+
+## The pitch-null (same evening, the reviewer's five-minute rerun)
+
+Null that keeps the moment and moves the lag (a semitone off, both
+directions): band alignment survives, sax content leaves. Result:
+MUTE passes it too (right-lag wins 77/61/61% without any sax) --
+because the sax plays chord tones and THE BAND VOICES THE SAME
+HARMONY. A semitone off the sax's note is a semitone off everyone's
+note. Moment+pitch probing detects the harmony, not the instrument.
+
+The confound now has two measured layers: shift time and you lose
+the song; shift pitch and you leave the chord. The sax hides inside
+the harmony's shadow. FULL still exceeds MUTE at every row (20.3 vs
+16.2, 4.0 vs 1.6, 2.6 vs 1.9) -- the increment is real but smaller
+than the harmony floor, so one-file detection requires a
+source-specific feature at the probed (moment, lag): timbre-at-lag
+or per-row structure. Queued next: the feedback experiment -- the
+LM biasing the sax's channels/lags top-down, prediction: the 60-66%
+whisper becomes a voice.
