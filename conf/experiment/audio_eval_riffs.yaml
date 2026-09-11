@@ -37,9 +37,9 @@ experiment:
         voices:
           mug:
             _target_: audiomonty.voices.WavVoice
-            path: ${path.expanduser:"~/Desktop/chords/django/MSWING_AM.wav"}
+            path: ${path.expanduser:"~/MontySAI/takes/MSWING_AM.wav"}
           banana:
             _target_: audiomonty.voices.WavVoice
-            path: ${path.expanduser:"~/Desktop/chords/django/FOIL.wav"}
+            path: ${path.expanduser:"~/MontySAI/takes/FOIL.wav"}
     logging:
       run_name: audio_eval_riffs

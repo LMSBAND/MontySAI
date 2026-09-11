@@ -1,1 +1,6 @@
 tbp.monty/
+
+# lab artifacts: local record, not shipped
+figures/
+paper/
+baseline_hz/
