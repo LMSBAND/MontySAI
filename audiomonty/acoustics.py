@@ -59,11 +59,31 @@ def chirp_call(f0: float, f1: float, period_s: float, duty: float = 0.4
 
 @dataclass
 class SoundSource:
-    """A voice attached to a place (usually an object's position)."""
+    """A voice attached to a place (usually an object's position).
+
+    self_atten: extra attenuation applied when the listener stands AT
+    the source (inside REF_DIST) -- the stapedius reflex. A bat mutes
+    its own middle ear in time with its call; without this the first
+    bat test was deafened by its own voice (echoes measured 38 dB
+    under the direct call, no ridge). 0.1 ~= -20 dB, physiological
+    ballpark."""
     name: str
     position: np.ndarray                 # (3,) world frame
     generator: Callable                  # t [s] array -> waveform array
     level: float = 1.0
+    self_atten: float = 1.0
+
+
+@dataclass
+class Reflector:
+    """A flat surface returning sound as an IMAGE SOURCE: the echo is
+    the original source mirrored through the wall -- a bat at d hears
+    a phantom bat at 2d, single spreading over the whole path. The
+    first bat test used a point-scatterer (double spreading) and the
+    world came back 38 dB too quiet to see."""
+    name: str
+    position: np.ndarray
+    reflectivity: float = 0.8
 
 
 @dataclass
@@ -72,13 +92,18 @@ class AcousticScene:
     listener at this pose hear for the next n samples?"""
     sample_rate: float
     sources: list[SoundSource] = field(default_factory=list)
+    reflectors: list[Reflector] = field(default_factory=list)
     _clock: int = 0                      # samples rendered so far
 
     def add(self, source: SoundSource) -> None:
         self.sources.append(source)
 
+    def add_reflector(self, r: Reflector) -> None:
+        self.reflectors.append(r)
+
     def remove_all(self) -> None:
         self.sources.clear()
+        self.reflectors.clear()
 
     def render(self, listener_pos: np.ndarray, n: int) -> np.ndarray:
         """Mono waveform at the listener for the next n samples.
@@ -96,10 +121,21 @@ class AcousticScene:
         # were sliced, while t0 + i/sr is not.
         t = (self._clock + np.arange(n)) / self.sample_rate
         out = np.zeros(n)
+        lp = np.asarray(listener_pos, dtype=float)
         for s in self.sources:
-            d = float(np.linalg.norm(np.asarray(listener_pos) - s.position))
+            d = float(np.linalg.norm(lp - s.position))
             gain = s.level * REF_DIST / max(d, REF_DIST)
+            if d < REF_DIST:
+                gain *= s.self_atten         # stapedius: own voice muted
             delay = d / SPEED_OF_SOUND
             out += gain * s.generator(t - delay)
+            # first-order echoes as image sources: total path length,
+            # single spreading; a bat's phantom sits at 2d, lag 2d/c.
+            for r in self.reflectors:
+                path = (float(np.linalg.norm(r.position - s.position))
+                        + float(np.linalg.norm(lp - r.position)))
+                g = (s.level * r.reflectivity
+                     * REF_DIST / max(path, REF_DIST))
+                out += g * s.generator(t - path / SPEED_OF_SOUND)
         self._clock += n
         return out

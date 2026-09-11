@@ -141,6 +141,29 @@ class WavVoice:
                          self._samples)
 
 
+class BatCall:
+    """The listener's own voice: a repeating short FM chirp. The
+    repetition rate is chosen so its OWN lag (1/rate) sits far past
+    the tracker's 25 ms window -- inside the window, the only
+    structure is echoes. 1 ms downward chirp, bat-style."""
+
+    def __init__(self, rate_hz: float = 8.0, f0: float = 8000.0,
+                 f1: float = 3000.0, dur_s: float = 0.001) -> None:
+        self.rate_hz = rate_hz
+        self.f0 = f0
+        self.f1 = f1
+        self.dur_s = dur_s
+
+    def __call__(self, t: np.ndarray) -> np.ndarray:
+        ph = np.mod(t, 1.0 / self.rate_hz)
+        active = ph < self.dur_s
+        u = np.where(active, ph / self.dur_s, 0.0)
+        k = np.log(self.f1 / self.f0)
+        phase = (2 * np.pi * self.f0 * self.dur_s
+                 * (np.exp(k * u) - 1) / k)
+        return np.where(active, np.sin(phase) * np.sin(np.pi * u), 0.0)
+
+
 # aliases for callers written against the factory-function API
 drone = Drone
 siren = Siren

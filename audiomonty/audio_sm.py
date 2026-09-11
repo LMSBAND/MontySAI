@@ -78,16 +78,28 @@ class AudioSM:
         sample_rate: float = 44100.0,
         save_raw_obs: bool = False,
         lesion: dict | None = None,
+        timbre_source: str = "raw",
     ) -> None:
         """lesion: kwargs for lesions.LesionedEar (dead_band,
         undamping_scale, ihc_tau_scale, keep_channels, open_loop).
-        None = healthy ear. See docs/damaged_ear_predictions.md."""
+        None = healthy ear. See docs/damaged_ear_predictions.md.
+
+        timbre_source: "raw" (harmonic bands from the raw
+        observation -- CameraSM precedent, fine for healthy-ear
+        work) or "ear" (harmonic-place sampling of the NAP, so the
+        timbre pathway passes through any lesion). LESION STUDIES
+        MUST USE "ear": with "raw", the LM has a side channel to
+        the healthy signal and damage is masked -- measured, not
+        hypothetical (tau x8 read correct with raw, confused
+        without). Post-AGC timbre is weaker (the AGC equalizes
+        spectra); that weakness is the ear's truth, not a bug."""
         self.sensor_module_id = sensor_module_id
         self.features = ["pitch_hz", "pitch_semis", "level", "salience",
                          "place_centroid", "timbre"]
         self.save_raw_obs = save_raw_obs
         self._sample_rate = sample_rate
         self._lesion = dict(lesion) if lesion else None
+        self._timbre_source = timbre_source
         self._ear = self._make_ear()
         self.state: SensorState | None = None
         self.is_exploring = False
@@ -209,8 +221,11 @@ class AudioSM:
         # column attempt failed the selftest flat (silent channels'
         # strobe-fallback floor + the AGC equalizing) -- sampling at
         # harmonic places asks only the witnesses that matter.
-        timbre = _timbre_harmonics(np.asarray(wave, float), pitch,
-                                   self._sample_rate)
+        if self._timbre_source == "ear":
+            timbre = _timbre_harmonics_ear(self._ear.nap_mean, pitch)
+        else:
+            timbre = _timbre_harmonics(np.asarray(wave, float), pitch,
+                                       self._sample_rate)
 
         return Message(
             location=location,
@@ -241,6 +256,28 @@ class AudioSM:
 
 
 TIMBRE_HARMONICS = (2, 3, 4, 5)
+
+
+def _timbre_harmonics_ear(nap_mean: np.ndarray, pitch: float
+                          ) -> np.ndarray:
+    """Timbre THROUGH the ear: log10 ratios of mean NAP at harmonic
+    k's membrane place vs the fundamental's place. Weaker than the
+    raw version (the AGC equalizes spectra -- measured 0.095
+    separation vs 2.157 raw on the same tones) but it passes through
+    lesions, which is mandatory for damaged-ear work."""
+    from . import sai_ref as R
+
+    def at(freq):
+        i = int(np.argmin(np.abs(R.poles - freq)))
+        i0, i1 = max(i - 1, 0), min(i + 2, len(nap_mean))
+        return float(nap_mean[i0:i1].max())
+    h1 = at(pitch)
+    if h1 <= 1e-12:
+        return np.zeros(len(TIMBRE_HARMONICS))
+    return np.array([
+        np.clip(np.log10(max(at(k * pitch), 1e-12) / h1), -2.0, 1.0)
+        for k in TIMBRE_HARMONICS
+    ])
 
 
 def _timbre_harmonics(wave: np.ndarray, pitch: float, sr: float

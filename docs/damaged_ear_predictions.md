@@ -112,3 +112,34 @@ Headline: **pitch identity rides two redundant codes — place and
 time. Either alone suffices; the temporal code is load-bearing for
 melody; both gone (the implant condition) is melody-deafness,
 matching the human FMI collapse.**
+
+
+---
+
+## REVISION (same day): the side channel is closed
+
+Reviewer (the other Claude) ruled the full-percept column unshippable:
+raw-observation timbre bypasses the lesion. Fixed -- AudioSM now takes
+`timbre_source="ear"` (harmonic-place sampling of the lesioned NAP);
+memory retrained on the same pathway; matrix re-run. Results
+(figures/lesion_study.png, updated):
+
+- TFS loss (tau x8): **no_match** with every percept through the
+  lesion -- the left column collapsed into the right, as predicted.
+- Dead region, 4-channel starvation: still harmless. The thesis holds
+  on the honest table.
+- NEW: OHC loss x0.1, previously "harmless," shows **partial
+  impairment** with the side channel closed (the foil tune confused
+  at timeout). The healthy-signal timbre had been masking it.
+- Post-AGC timbre is weak (the AGC equalizes spectra -- measured
+  0.095 separation vs 2.157 raw). That weakness is the ear's truth.
+  Open question it raises: where do real ears get timbre robustly?
+  Candidate: onset spectra, before the AGC settles.
+
+METHOD RULE, standing: lesion studies in this system use
+timbre_source="ear" or the timbre-blind LM. The raw pathway is for
+healthy-ear work only.
+
+Paper sentence, now with the control behind it: *melody recognition
+in this system depends on temporal fine structure and is robust to
+place-code loss, consistent with the cochlear-implant literature.*
