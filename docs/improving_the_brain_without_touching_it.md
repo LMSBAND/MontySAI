@@ -547,3 +547,5 @@ Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
     *Analysis*, 23(6), 121–123.
 11. Dennett, D. C. (1995). *Darwin's Dangerous Idea: Evolution and
     the Meanings of Life*. Simon & Schuster. (Universal acid.)
+12. Hawkins, J., with Blakeslee, S. (2004). *On Intelligence*.
+    Times Books. (Epigraph.)
