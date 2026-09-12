@@ -1,10 +1,12 @@
-# Multimodal sensor integration and termination criteria in Monty: an external evaluation
+# The Full Monty: Bodies Exposed
 
-**Bryan Leavelle** (independent; wildlife data analyst, in a
-personal capacity), with Claude (Anthropic) as implementation
-assistant.
-2026-09-12 · https://github.com/LMSBAND/MontySAI · MIT license.
-Figures referenced by repository path.
+*Multimodal sensor integration and termination criteria in Monty:
+an external evaluation*
+
+> *Complexity is a result of confusion, not the other way around.*
+
+**Bryan Leavelle**
+2026-09-12 · https://github.com/LMSBAND/MontySAI · MIT license
 
 ## Abstract
 
