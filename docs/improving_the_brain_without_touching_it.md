@@ -377,10 +377,10 @@ direction on that cone, at every elevation, gives the same
 interaural difference. Against a target that climbs out of the
 horizontal plane, an agent whose head does not move is blind in
 precisely the dimension the target is escaping into. Simulated as a
-pursuit this is not a small disadvantage but a total one: a
-climbing target is lost on every trial, the pursuer holding the
-correct azimuth while the target leaves along the one axis the ears
-cannot resolve (Figure 7, left).
+pursuit the disadvantage is total: a climbing target is lost on
+every trial, the pursuer holding the correct azimuth while the
+target leaves along the one axis the ears cannot resolve (Figure 7,
+left).
 
 ![Figure 7. With the head held level, a climbing target escapes on
 every trial (left); rolling the head between chirps supplies the
@@ -400,9 +400,9 @@ directional gain at the target: pointing the head is one motor act
 serving every sensor on the skull, and the recognition it enables
 is unavailable to any fixed sensor of equal acuity. This is the
 sensorimotor thesis of the underlying architecture at its smallest
-scale. The movement is not a way of gathering more of the same
-evidence; it is the only way of gathering evidence of a kind a
-stationary sensor cannot obtain at all.
+scale. The movement is the only way to obtain evidence of a kind a
+stationary sensor cannot reach, in a dimension no amount of
+listening from one posture would ever supply.
 
 ![Figure 8. Ten pursuits with a level head (top row) and ten with
 the head rolling between chirps (bottom row): elevation, and the
@@ -420,9 +420,8 @@ concept of rotation; it is displacement bookkeeping over a graph.
 The veto that behaves like skepticism is a threshold on a ratio of
 two accumulators. The consensus rule that behaves like judicial
 caution is a counter and a string comparison. Dennett's claim is
-that this ordering is not an embarrassment but the actual
-architecture of mind: comprehension, where it exists, is composed
-of competences, and never the reverse. The thousand-brains program
+that this ordering is the actual architecture of mind: comprehension,
+where it exists, is composed of competences, and never the reverse. The thousand-brains program
 is one of the few research efforts that has made this bet
 explicitly, at the level of architecture, with the cortical column
 as the unit of competence. Our negative results sharpen the bet in
@@ -506,8 +505,9 @@ is impeccable, and suppose the belief is even true, because the
 friend is in fact standing behind you. Justified, true, and still
 not knowledge, since the justification never touched the fact that
 made it true. Sustained across a minute of walking beside the
-stranger, the same belief is not an epistemological puzzle but a
-clinical one. Nothing in either man changed between the glance and
+stranger, the same belief becomes a clinical matter, a delusion
+held against the evidence of the man at your side. Nothing in
+either man changed between the glance and
 the minute. What changed is that belief was allowed to run. The conclusion I
 drew is that the definition fails because it treats knowledge as a
 state satisfying conditions at a time, when it is the behavior of
@@ -517,9 +517,8 @@ is what remains standing. Time here plays the role of Dennett's
 universal acid [11]: poured over a belief, it eats through every
 justification that is not attached to the fact, and no container
 of definition holds it. What the acid leaves behind is knowledge,
-and nothing else survives the pour. Gettier cases, on this reading, are not
-counterexamples to a definition; they are photographs of a process
-that has not yet run.
+and nothing else survives the pour. Gettier cases, on this reading,
+are photographs of a process caught before it has run.
 
 An hour before this section was written, that observation was used
 to untangle the communication between several sensory organs and
@@ -527,13 +526,13 @@ the system they report to. The mechanics of Section 5 are the
 temporal reading made operational. Once the system was required to
 wait, to sample the world over time rather than terminate at its
 first confident answer, the verdicts clarified on their own. Once
-the absence of evidence was treated not as evidence of absence but
-as evidence of a different world entirely, one in which the
-predicted signal has no place, the false identifications on the
-probe set fell to zero without the system retreating to a safe
-alternative answer. The withheld verdict deserves particular
-attention, because it is not a failure mode. In an embodied
-system it is the point at which the machine should turn to a human
+the absence of evidence was read as positive evidence of a
+different world, one in which the predicted signal has no place,
+the false identifications on the probe set fell to zero without the
+system retreating to a safe alternative answer. The withheld
+verdict deserves particular attention as a feature of the design.
+In an embodied system it is the point at which the machine should
+turn to a human
 and ask what it is perceiving, receive an answer, investigate
 further, and retain the result. Contemporary large language models
 are trained toward the opposite disposition: premature confidence
