@@ -36,13 +36,17 @@ and a functioning sensor that finds no trace of the candidate
 object has no mechanism for contributing negative evidence. Two
 modifications, implemented as a subclass and enabled by
 configuration, reduced false identifications on the probe set from
-three to zero while preserving recognition of learned objects. We
-discuss the implications for termination, cross-modal voting, and
-the representation of absence.
+three to zero while preserving recognition of learned objects. A
+fourth, echolocating sensor extends the method to active sensing:
+recorded in the frame of the agent's entry pose, a room becomes an
+object whose recognized pose is the agent's own location within it,
+and a moving head recovers, from the ears alone, an elevation that a
+stationary head cannot resolve. We discuss the implications for
+termination, cross-modal voting, and the representation of absence.
 
 **Scope.** This document covers the work of 2026-09-12: the retinal
-and tactile sensors, the representation comparison, and the
-termination analysis. The auditory results it builds on
+and tactile sensors, the representation comparison, the termination
+analysis, and the echolocation experiments of Section 7. The auditory results it builds on
 (transposition invariance, cochlear lesion studies, evaluations on
 recorded guitar) and the acoustic ranging measurements in a
 physical room were carried out from 2026-09-10 onward and are
@@ -325,9 +329,88 @@ does not veto.
    the level of cross-modal aggregation rather than in any improved
    single sensor.
 
-## 7. Three remarks outside the engineering
+## 7. Echolocation, and the case for moving the sensor
 
-**7.1. Competence without comprehension.** Dennett's phrase [7]
+A fourth sensor was built to a different brief. The three above
+recover their spatial extent from a static scene, either from the
+evolution of a sound or from an internal fixation sequence; none of
+them moves. This one does, and moving it turns out to be the entire
+point. It emits a chirp and listens with two independent CARFAC
+ears; ranges are read from the spectral-image peaks past an
+emission-blanking interval, and bearing follows from the interaural
+range difference (calibrated to about one degree over ±75°). It was
+validated twice, in simulation (worst-case ranging error 3.3 cm
+over 0.5 to 4 m) and physically against the taped distances of
+Figure 2.
+
+**7.1. The room is the object; the pose is where you stand in it.**
+An environment was constructed in which the learned objects are not
+things but places: a room layout, a set of reflecting surfaces,
+that a two-eared agent flies a patrol through while chirping. Each
+chirp yields a range and a bearing, and the reflection is recorded
+at its position in the frame of the agent's entry pose. This choice
+of frame is the experiment. In a world frame a room would present
+an identical map from any point of entry, and recognition would be
+trivial; in the entry frame, the same room entered from a different
+point presents a rigidly rotated and translated map, which is
+exactly the transformation the learning module's pose search exists
+to undo. Two rooms were learned by flying them. Both were
+recognized on a fresh flight; and when the agent entered a learned
+room at a different point of the patrol, the room was still
+recognized, and the pose the learning module reported was the
+agent's actual point of entry, recovered to within about nine
+degrees (Figure 6). Recognition and self-localization are here a
+single act: to know the room is to know where in it you stand. The
+one probe room, a corridor never flown, was misidentified as a
+learned room at some rotation, for the reason established in
+Section 6.4: a straight wall matches a straight wall, and straight
+walls are the degenerate objects of places.
+
+![Figure 6. Rooms as objects: echoes recorded in the entry-pose
+frame, and a room recognized from a novel entry whose detected
+rotation recovers the point of entry.](../figures/rooms_as_objects.png)
+
+**7.2. A level head cannot hear elevation.** Two ears on a
+horizontal baseline measure the difference in path length to a
+target, which fixes it to a cone about the baseline axis; every
+direction on that cone, at every elevation, gives the same
+interaural difference. Against a target that climbs out of the
+horizontal plane, an agent whose head does not move is blind in
+precisely the dimension the target is escaping into. Simulated as a
+pursuit this is not a small disadvantage but a total one: a
+climbing target is lost on every trial, the pursuer holding the
+correct azimuth while the target leaves along the one axis the ears
+cannot resolve (Figure 7, left).
+
+![Figure 7. With the head held level, a climbing target escapes on
+every trial (left); rolling the head between chirps supplies the
+missing dimension and the pursuit succeeds (right).](../figures/night_hunt.png)
+
+**7.3. Rolling the head between chirps recovers it.** The cone of
+confusion is fixed to the head, not to the world. Roll the head
+about the direction of travel and the baseline axis rolls with it,
+so a second chirp at a second roll angle fixes the target to a
+second cone; two cones intersect, generically, in one forward
+direction, and the elevation the level head could not measure is
+recovered from the ears alone, with no appeal to vision. The same
+climbing target that escaped without fail is caught on every trial,
+in roughly ten chirps (Figure 8). The movement that supplies the
+elevation is the same movement that would aim a visual field and a
+directional gain at the target: pointing the head is one motor act
+serving every sensor on the skull, and the recognition it enables
+is unavailable to any fixed sensor of equal acuity. This is the
+sensorimotor thesis of the underlying architecture at its smallest
+scale. The movement is not a way of gathering more of the same
+evidence; it is the only way of gathering evidence of a kind a
+stationary sensor cannot obtain at all.
+
+![Figure 8. Ten pursuits with a level head (top row) and ten with
+the head rolling between chirps (bottom row): elevation, and the
+capture, come only with the movement.](../figures/head_tilt.png)
+
+## 8. Three remarks outside the engineering
+
+**8.1. Competence without comprehension.** Dennett's phrase [7]
 describes this work exactly, and we mean that as a finding rather
 than a disclaimer. The systems above recognize objects, localize
 themselves, refuse impostors, and register dissent, and at no point
@@ -366,7 +449,7 @@ competences. Comprehension, if it is ever to show up here, will
 presumably arrive the way everything else did: as one more
 mechanism with a rationale it cannot see.
 
-**7.2. Consciousness, ignored.** A pattern ran through this work that we did not put there. The
+**8.2. Consciousness, ignored.** A pattern ran through this work that we did not put there. The
 distinctions the engineering kept demanding are, one after another,
 the distinctions that discussions of consciousness usually claim as
 their subject matter. The difference between a sensor that receives
@@ -405,7 +488,7 @@ from absent measurement, attends, binds, and refuses to conclude.
 Whether that is a debunking of the explananda or an independent
 rediscovery of them is, we think, the interesting question.
 
-**7.3. Knowledge as a property of a process: a first-author
+**8.3. Knowledge as a property of a process: a first-author
 remark.** One liberty available to an author outside the academy is
 to say where an idea actually came from. A year before this work I
 ran a project, informally called Smart Guys, that ended in what I
@@ -459,7 +542,7 @@ instead is a system that wants to learn, is able to learn, and is
 willing to stop, ask, and remember the answer. Stated in a few
 words, that is what was built here.
 
-## 8. Limitations
+## 9. Limitations
 
 The object set is two learned and three probe objects; none of the
 quantitative results should be assumed to generalize beyond it. The
@@ -473,7 +556,7 @@ consensus modifications are implemented at the termination decision
 because that is the available socket; we argue below they belong in
 the voting protocol.
 
-## 9. Questions for the maintainers
+## 10. Questions for the maintainers
 
 1. Where should negative evidence live? The expected-signal test is
    attached to termination for lack of a better socket. Its natural
