@@ -1,0 +1,36 @@
+# @package _global_
+# The triad with NOVELTY BY DISAGREEMENT: same senses, same LMs,
+# but the episode only ends in a match when match_criterion.count
+# senses agree on the SAME creature, and confident dissent blocks.
+# Run against creatures (must still recognize) and against foils
+# (must now withhold wherever the senses disagree).
+defaults:
+  - /monty: evidencegraph_exp1000_emin_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: evidence_triad
+  - /monty/sensor_module: audio_retina_touch
+  - /monty/connectivity: 3lm_triad
+  - /environment: audio_mujoco_triad
+  - /env_interface: audio_eval_2sounds
+  - /env_interface/transform: none
+  - /logging: basic_info_monty_runs
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.object_recognition_experiments.MontyObjectRecognitionExperiment
+  config:
+    show_sensor_output: false
+    max_train_steps: 40
+    max_eval_steps: 60
+    max_total_steps: 300
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ${path.expanduser:"~/tbp/results/monty/pretrained_models/my_trained_models/triad_pretrain_2creatures/pretrained"}
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 2
+    seed: 42
+    supervised_lm_ids: []
+    logging:
+      run_name: triad_eval_consensus
+    monty_config:
+      monty_class: ${monty.class:audiomonty.consensus.MontyConsensus}
