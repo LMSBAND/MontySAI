@@ -363,9 +363,7 @@ competences. Comprehension, if it is ever to show up here, will
 presumably arrive the way everything else did: as one more
 mechanism with a rationale it cannot see.
 
-**7.2. Consciousness, ignored.** *(Placeholder; to be expanded by
-the first author. The following is a scaffold for that argument.)*
-A pattern ran through this work that we did not put there. The
+**7.2. Consciousness, ignored.** A pattern ran through this work that we did not put there. The
 distinctions the engineering kept demanding are, one after another,
 the distinctions that discussions of consciousness usually claim as
 their subject matter. The difference between a sensor that receives
