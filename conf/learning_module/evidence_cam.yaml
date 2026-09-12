@@ -8,11 +8,14 @@ learning_module_0:
   max_match_distance: 0.01
   tolerances:
     patch:
+      # STOCK: verbatim from their evidence_1lm_nn10_dod0025.yaml
       hsv: ${np.array:[0.1, 0.2, 0.2]}
       curvature: 0.4
   feature_weights:
     patch:
-      hsv: ${np.ones:3}
+      # STOCK: hue weighted 2x, their benchmark numbers (first duel
+      # ran np.ones(3); audited and reran at stock -- see commit)
+      hsv: ${np.array:[2.0, 0.5, 0.5]}
       curvature: 1.0
   x_percent_threshold: 20
   evidence_threshold_config: 80%
