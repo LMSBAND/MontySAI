@@ -1,0 +1,13 @@
+# @package experiment.config
+do_train: true
+train_env_interface_args:
+  object_names:
+  - mug
+  - banana
+  # One rotation, one scale, pinned: the eye DOES care which way the
+  # object faces, so the pretraining pose is explicit.
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 0.0]}
+train_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}

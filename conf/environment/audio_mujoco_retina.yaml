@@ -1,0 +1,43 @@
+# @package experiment.config.environment
+# The singing world, now also SEEN: same voiced MuJoCo objects, with
+# the camera patch fattened to 64x64 and the noop agent moved to
+# 0.3 m so the object subtends enough pixels for a contour walk
+# (~100 on-object at scale 1). The listener still sits still: audio
+# extent is the sound's evolution, retinal extent is the internal
+# saccade.
+env_init_args:
+  data_path: ${path.expanduser:${oc.env:MONTY_DATA}/mujoco/objects/ycb}
+  voices:
+    mug:
+      _target_: audiomonty.voices.drone
+    banana:
+      _target_: audiomonty.voices.siren
+  listener_agent_id: agent_id_0
+  sample_rate: 44100.0
+  step_seconds: 0.25
+  agents:
+    - _target_: tbp.monty.simulators.mujoco.agents.NoopAgent
+      _partial_: true
+      agent_id: agent_id_0
+      sensor_configs:
+        # The ear registered as a sensor on the skull: 1x1 so MuJoCo
+        # renders next to nothing, and AudioEnvironment overwrites
+        # the "audio" observation with the waveform every step. This
+        # is what gives the supervised pretraining a sensor position
+        # for the audio LM (offset zero -- same skull as the eye).
+        audio:
+          _target_: tbp.monty.frameworks.sensors.SensorConfig
+          resolution:
+            width: 1
+            height: 1
+        patch:
+          _target_: tbp.monty.frameworks.sensors.SensorConfig
+          resolution:
+            width: 64
+            height: 64
+      position:
+        - 0.0
+        - 1.5
+        - 0.3
+  raise_actuate_missing: false
+env_init_func: ${monty.class:audiomonty.audio_env.AudioMuJoCoEnvironment}

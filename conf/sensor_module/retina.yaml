@@ -1,0 +1,4 @@
+# @package experiment.config.monty_config.sensor_modules
+sensor_module_0:
+  _target_: audiomonty.retina_sm.RetinaSM
+  sensor_module_id: patch

@@ -1,0 +1,35 @@
+# @package _global_
+# THE REAL FULL MONTY, verdict phase: which creature is this? Ear LM
+# and eye LM each match their own graphs and VOTE -- Monty's own
+# _combine_votes, running a two-modality federation for the first
+# time in this repo. Controls come as overrides:
+#   dark:  experiment.config.monty_config.sensor_modules.sensor_module_1.lit=false
+#   mute:  experiment.config.environment.env_init_args.voices={}
+defaults:
+  - /monty: evidencegraph_exp1000_emin_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: evidence_audio_retina
+  - /monty/sensor_module: audio_retina
+  - /monty/connectivity: 2lm_audio_retina
+  - /environment: audio_mujoco_retina
+  - /env_interface: audio_eval_2sounds
+  - /env_interface/transform: none
+  - /logging: basic_info_monty_runs
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.object_recognition_experiments.MontyObjectRecognitionExperiment
+  config:
+    show_sensor_output: false
+    max_train_steps: 40
+    max_eval_steps: 60
+    max_total_steps: 300
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ${path.expanduser:"~/tbp/results/monty/pretrained_models/my_trained_models/fusion_pretrain_2creatures/pretrained"}
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: []
+    logging:
+      run_name: fusion_eval_2creatures

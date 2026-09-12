@@ -1,0 +1,20 @@
+# @package experiment.config
+# TEST 1 FOR EYES, through the learning module: the same creatures,
+# 1.5x the size. If (log-r, theta) is a real reference frame, the
+# scaled object is the learned graph slid along log-r -- pose, not a
+# new object. No scale code exists anywhere in the pipeline to cheat
+# with.
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - mug
+  - banana
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 0.0]}
+    scales:
+    - - 1.5
+      - 1.5
+      - 1.5
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}

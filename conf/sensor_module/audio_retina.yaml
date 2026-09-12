@@ -1,0 +1,8 @@
+# @package experiment.config.monty_config.sensor_modules
+# The federation's sensors: the ear and the log-polar eye, one skull.
+sensor_module_0:
+  _target_: audiomonty.audio_sm.AudioSM
+  sensor_module_id: audio
+sensor_module_1:
+  _target_: audiomonty.retina_sm.RetinaSM
+  sensor_module_id: patch
