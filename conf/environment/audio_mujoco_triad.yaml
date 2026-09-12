@@ -1,0 +1,41 @@
+# @package experiment.config.environment
+# The full skull: ear (1x1 dummy sensor; AudioEnvironment overwrites
+# its observation with the waveform), log-polar eye (64x64), and
+# fingertip (64x64 depth, reach-limited in the SM). Same voiced
+# creatures. One agent, three senses, zero offsets.
+env_init_args:
+  data_path: ${path.expanduser:${oc.env:MONTY_DATA}/mujoco/objects/ycb}
+  voices:
+    mug:
+      _target_: audiomonty.voices.drone
+    banana:
+      _target_: audiomonty.voices.siren
+  listener_agent_id: agent_id_0
+  sample_rate: 44100.0
+  step_seconds: 0.25
+  agents:
+    - _target_: tbp.monty.simulators.mujoco.agents.NoopAgent
+      _partial_: true
+      agent_id: agent_id_0
+      sensor_configs:
+        audio:
+          _target_: tbp.monty.frameworks.sensors.SensorConfig
+          resolution:
+            width: 1
+            height: 1
+        patch:
+          _target_: tbp.monty.frameworks.sensors.SensorConfig
+          resolution:
+            width: 64
+            height: 64
+        touch:
+          _target_: tbp.monty.frameworks.sensors.SensorConfig
+          resolution:
+            width: 128
+            height: 128
+      position:
+        - 0.0
+        - 1.5
+        - 0.3
+  raise_actuate_missing: false
+env_init_func: ${monty.class:audiomonty.audio_env.AudioMuJoCoEnvironment}

@@ -1,0 +1,11 @@
+# @package experiment.config.monty_config.sensor_modules
+# See the banana, hear the banana, touch the banana.
+sensor_module_0:
+  _target_: audiomonty.audio_sm.AudioSM
+  sensor_module_id: audio
+sensor_module_1:
+  _target_: audiomonty.retina_sm.RetinaSM
+  sensor_module_id: patch
+sensor_module_2:
+  _target_: audiomonty.touch_sm.TouchSM
+  sensor_module_id: touch
