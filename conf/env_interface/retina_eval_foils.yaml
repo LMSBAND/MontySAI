@@ -1,0 +1,16 @@
+# @package experiment.config
+# THE FOIL TEST our eye never faced: three creatures it never
+# learned, chosen adversarially -- bowl (a surface of revolution
+# like the mug), apple (mug-red), adjustable_wrench (banana-long).
+# Every verdict except refusal is a hallucination.
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - bowl
+  - apple
+  - adjustable_wrench
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 0.0]}
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}

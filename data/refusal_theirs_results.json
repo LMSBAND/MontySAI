@@ -1,0 +1,1 @@
+{"theirs_foils": [{"target": "bowl", "verdict": "mug", "step": 22}, {"target": "apple", "verdict": "mug", "step": 26}, {"target": "adjustable_wrench", "verdict": "mug", "step": 31}, {"target": "bowl", "verdict": "no_match/timeout", "step": null}]}
