@@ -322,7 +322,7 @@ does not veto.
    the level of cross-modal aggregation rather than in any improved
    single sensor.
 
-## 7. Two remarks outside the engineering
+## 7. Three remarks outside the engineering
 
 **7.1. Competence without comprehension.** Dennett's phrase [7]
 describes this work exactly, and we mean that as a finding rather
