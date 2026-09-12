@@ -1,7 +1,23 @@
 # Improving the brain without touching it
 
-**One session, 2026-09-12. Zero edits to tbp.monty. Every claim below
-has a commit, a figure, and its controls in this repo.**
+**TL;DR** — We gave Monty three senses through its stock extension
+sockets (zero edits to tbp.monty), then pushed the federation with
+adversarial foils and found the false IDs come from the verdict
+machinery, not the sensors: (1) the stock quorum counts *confident*
+LMs, not *agreeing* ones — it convicted on two senses naming
+different objects; (2) first-winner termination forecloses evidence
+that accumulates slower than confidence; (3) a working sense that
+finds *no trace* of the candidate has no way to testify against it.
+Two subclass-sized fixes — consensus-on-identity and a relative
+expected-signal veto — took foil false-identifications **3 → 1 → 0**
+while learned objects stayed recognized.
+
+**Scope**: this document covers 2026-09-12 — the eye, the fingertip,
+the eye-vs-eye duel, and the verdict-machinery work. The ear it
+builds on (key-is-pose, the lesion studies, the riff evals) and the
+real-room sonar takes are earlier work in this repo, 2026-09-10
+onward; see `figures/` and `docs/`. Every claim below has a commit,
+a figure, and its controls here.
 
 We built Monty two new senses, ran its own eye against ours in a
 controlled duel, then pushed the whole federation until it lied to
@@ -59,7 +75,15 @@ sense alone — touch recognized both creatures in dark silence.
 Same 64×64 patch, same LM settings, same saccade privilege — only
 the coordinate choice differed between our log-polar eye and a
 faithful stand-in for the reference CameraSM (3D metric locations,
-normal/curvature pose, HSV).
+normal/curvature pose, HSV). Why a stand-in and not the class
+itself: `ObservationProcessor.process` is welded to the transform
+stack's observation shape (`semantic_3d`, `sensor_frame_data`,
+`cam_to_world`) and reads the simulator's *semantic channel* for
+on-object — an oracle our sensors don't get. The stand-in
+reimplements its percept recipe on raw rgba+depth with the same
+walk ours uses. Known limitation, stated plainly: we have not
+benchmarked the stand-in against the original on their stock rig;
+until then, "their eye" means "their percept recipe on our skull."
 
 Audit trail, in order: pose sampling verified stock
 (`initial_possible_poses='informed'`; `max_nneighbors` raised 3→10
