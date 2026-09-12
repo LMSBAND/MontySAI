@@ -3,7 +3,8 @@
 *Multimodal sensor integration and termination criteria in Monty:
 an external evaluation*
 
-> *Complexity is a result of confusion, not the other way around.*
+> *"Complexity is a symptom of confusion, not a cause."*
+> — Jeff Hawkins, *On Intelligence*
 
 **Bryan Leavelle**
 2026-09-12 · https://github.com/LMSBAND/MontySAI · MIT license
