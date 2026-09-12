@@ -413,13 +413,15 @@ Since 1963 it has been known that the analysis of knowledge as
 justified true belief admits counterexamples, and the six decades
 since have been spent patching the definition. The counterexamples
 share a feature that the patches do not address: they are evaluated
-at an instant. Consider mistaking a stranger for a friend. At a
-glance, in every instantaneously measurable respect, the
-justification is impeccable, and the identification is wrong;
-sustained across a minute of walking beside him, the same
-identification is not an epistemological puzzle but a clinical
-one. Nothing in the man changed between the glance and the minute.
-What changed is that belief was allowed to run. The conclusion I
+at an instant. Consider seeing a stranger across a room and
+concluding that a friend is present. At a glance the justification
+is impeccable, and suppose the belief is even true, because the
+friend is in fact standing behind you. Justified, true, and still
+not knowledge, since the justification never touched the fact that
+made it true. Sustained across a minute of walking beside the
+stranger, the same belief is not an epistemological puzzle but a
+clinical one. Nothing in either man changed between the glance and
+the minute. What changed is that belief was allowed to run. The conclusion I
 drew is that the definition fails because it treats knowledge as a
 state satisfying conditions at a time, when it is the behavior of
 belief under continued sampling: belief is revised by the second,
