@@ -1,0 +1,34 @@
+# @package _global_
+# Eye-vs-eye, their side. Conditions come as env_interface swaps:
+#   base:     env_interface=audio_eval_2sounds
+#   scaled:   env_interface=retina_eval_scaled
+#   rotated:  env_interface=retina_eval_rotated
+#   rotscale: env_interface=retina_eval_rotscale
+defaults:
+  - /monty: evidencegraph_exp1000_emin_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: evidence_cam
+  - /monty/sensor_module: cam
+  - /monty/connectivity: 1lm_1retina
+  - /environment: audio_mujoco_retina
+  - /env_interface: audio_eval_2sounds
+  - /env_interface/transform: none
+  - /logging: basic_info_monty_runs
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.object_recognition_experiments.MontyObjectRecognitionExperiment
+  config:
+    show_sensor_output: false
+    max_train_steps: 40
+    max_eval_steps: 60
+    max_total_steps: 300
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ${path.expanduser:"~/tbp/results/monty/pretrained_models/my_trained_models/cam_pretrain_2creatures/pretrained"}
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: []
+    logging:
+      run_name: cam_eval_2creatures
