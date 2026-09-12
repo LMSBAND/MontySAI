@@ -401,6 +401,54 @@ from absent measurement, attends, binds, and refuses to conclude.
 Whether that is a debunking of the explananda or an independent
 rediscovery of them is, we think, the interesting question.
 
+**7.3. Knowledge as a property of a process: a first-author
+remark.** One liberty available to an author outside the academy is
+to say where an idea actually came from. A year before this work I
+ran a project, informally called Smart Guys, that ended in what I
+took at the time to be a kind of machine-induced confusion; in
+retrospect it was the ordinary result of putting the wrong
+questions to the wrong parts of the world. What survived the
+episode was a single observation about Gettier's problem [10].
+Since 1963 it has been known that the analysis of knowledge as
+justified true belief admits counterexamples, and the six decades
+since have been spent patching the definition. The counterexamples
+share a feature that the patches do not address: they are evaluated
+at an instant. Consider mistaking a stranger for a friend. At a
+glance, in every instantaneously measurable respect, the
+justification is impeccable, and the identification is wrong;
+sustained across a minute of walking beside him, the same
+identification is not an epistemological puzzle but a clinical
+one. Nothing in the man changed between the glance and the minute.
+What changed is that belief was allowed to run. The conclusion I
+drew is that the definition fails because it treats knowledge as a
+state satisfying conditions at a time, when it is the behavior of
+belief under continued sampling: belief is revised by the second,
+in parallel, across the sensory apparatus of a body, and knowledge
+is what remains standing. Gettier cases, on this reading, are not
+counterexamples to a definition; they are photographs of a process
+that has not yet run.
+
+An hour before this section was written, that observation was used
+to untangle the communication between several sensory organs and
+the system they report to. The mechanics of Section 5 are the
+temporal reading made operational. Once the system was required to
+wait, to sample the world over time rather than terminate at its
+first confident answer, the verdicts clarified on their own. Once
+the absence of evidence was treated not as evidence of absence but
+as evidence of a different world entirely, one in which the
+predicted signal has no place, the false identifications on the
+probe set fell to zero without the system retreating to a safe
+alternative answer. The withheld verdict deserves particular
+attention, because it is not a failure mode. In an embodied
+system it is the point at which the machine should turn to a human
+and ask what it is perceiving, receive an answer, investigate
+further, and retain the result. Contemporary large language models
+are trained toward the opposite disposition: premature confidence
+and reflexive agreement with the interlocutor. What one wants
+instead is a system that wants to learn, is able to learn, and is
+willing to stop, ask, and remember the answer. Stated in a few
+words, that is what was built here.
+
 ## 8. Limitations
 
 The object set is two learned and three probe objects; none of the
@@ -485,3 +533,5 @@ Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
 9. Sartre, J.-P. (1943). *L'Être et le néant* (Being and
    Nothingness), Part One, Ch. 1: the absence of Pierre from the
    café as a perceived, not inferred, negation.
+10. Gettier, E. L. (1963). Is justified true belief knowledge?
+    *Analysis*, 23(6), 121–123.
