@@ -394,7 +394,8 @@ shape, and a research program that ignores consciousness will
 nevertheless be made to rebuild its outline, mechanism by
 mechanism, by nothing more mysterious than foils and ablations. We
 take no position here on which reading is correct, only note that
-"ignored" has turned out to be a load-bearing methodology: at no
+"ignored" has functioned here as a methodology rather than an
+omission: at no
 point did any question of experience enter a design decision, and
 the resulting system nevertheless distinguishes measured absence
 from absent measurement, attends, binds, and refuses to conclude.
