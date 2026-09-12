@@ -1,5 +1,11 @@
 # Multimodal sensor integration and termination criteria in Monty: an external evaluation
 
+**Bryan Leavelle** (independent; wildlife data analyst, in a
+personal capacity), with Claude (Anthropic) as implementation
+assistant.
+2026-09-12 · https://github.com/LMSBAND/MontySAI · MIT license.
+Figures referenced by repository path.
+
 ## Abstract
 
 We report an evaluation of the Monty reference implementation
@@ -161,7 +167,7 @@ revolution in metric space; a ring, uniform in polar angle, in
 log-polar space), and unlearned objects of approximately round
 silhouette accrue evidence for it. A tilt sweep to 90° found no
 comparable failure boundary for learned objects: the log-polar eye
-continued to identify both creatures, declining only once (the mug
+continued to identify both learned objects, declining only once (the mug
 at 80°).
 
 ## 4. Findings concerning the verdict machinery
@@ -221,11 +227,12 @@ implementation tested the dissenting module's evidence against
 zero and failed, instructively: even in a nominally silent
 environment the auditory module accrues a small positive evidence
 value (1.08 in these runs) from the cochlear model's startup
-transient. The operative test is therefore relative. A module that
-(a) is functioning (its sensor is not disabled), (b) possesses a
-learned graph for the candidate object, and (c) holds evidence for
-that candidate below a fixed fraction (0.25) of the mean evidence
-of the supporting modules, vetoes the verdict. On the apple, the
+transient. The operative test is therefore relative. A module
+vetoes the verdict when three conditions hold: it is functioning
+(its sensor is not disabled); it possesses a learned graph for the
+candidate object; and its evidence for that candidate sits below a
+fixed fraction (0.25) of the mean evidence of the supporting
+modules. On the apple, the
 auditory module held 1.08 against supporting evidence of 6 to 11,
 and the identification was blocked.
 
@@ -332,15 +339,44 @@ the voting protocol.
 ```
 # sensors and the three-module system
 uv run python run.py experiment=triad_pretrain_2creatures
-uv run python run.py experiment=triad_eval_2creatures          # ablation matrix via dark/mute/numb overrides
+uv run python run.py experiment=triad_eval_2creatures
+#   (ablation matrix via dark/mute/numb overrides)
+
 # representation comparison
 uv run python run.py experiment=cam_pretrain_2creatures
-uv run python run.py experiment=cam_eval_2creatures env_interface=retina_eval_{scaled,rotated,rotscale,tilted,tilted60}
+uv run python run.py experiment=cam_eval_2creatures \
+    env_interface=retina_eval_scaled     # also: rotated,
+                                         # rotscale, tilted, tilted60
+
 # Section 4 findings and Section 5 modifications
-uv run python run.py experiment=triad_eval_2creatures env_interface=retina_eval_foils   # finding 4.1
-uv run python run.py experiment=triad_eval_consensus  env_interface=retina_eval_foils   # 0 false identifications
+uv run python run.py experiment=triad_eval_2creatures \
+    env_interface=retina_eval_foils      # finding 4.1
+uv run python run.py experiment=triad_eval_consensus \
+    env_interface=retina_eval_foils      # 0 false identifications
 ```
 
 Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
 `figures/where_refusal_lives.png`,
 `figures/novelty_by_disagreement.png`, `figures/real_sonar.png`.
+
+## References
+
+- Lyon, R. F. (2017). *Human and Machine Hearing: Extracting
+  Meaning from Sound*. Cambridge University Press. (CARFAC.)
+- Patterson, R. D., Robinson, K., Holdsworth, J., McKeown, D.,
+  Zhang, C., & Allerhand, M. (1992). Complex sounds and auditory
+  images. In *Auditory Physiology and Perception* (pp. 429–446).
+  (The stabilized auditory image.)
+- Schwartz, E. L. (1980). Computational anatomy and functional
+  architecture of striate cortex: a spatial mapping approach to
+  perceptual coding. *Vision Research*, 20(8), 645–669. (Log-polar
+  cortical mapping.)
+- Hawkins, J. (2021). *A Thousand Brains: A New Theory of
+  Intelligence*. Basic Books.
+- Clay, V., Leadholm, N., & Hawkins, J. (2024). The Thousand
+  Brains Project: a new paradigm for sensorimotor intelligence.
+  arXiv:2412.18354. (Monty.)
+- Ernst, M. O., & Banks, M. S. (2002). Humans integrate visual and
+  haptic information in a statistically optimal fashion. *Nature*,
+  415(6870), 429–433. (Reliability-weighted fusion, used in the
+  earlier percept-level study this work supersedes.)
