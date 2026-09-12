@@ -1,0 +1,35 @@
+# @package _global_
+# WHICH ROOM AM I IN? Recognition by echolocation while flying.
+# The pose experiment is a CLI override:
+#   experiment.config.environment.env_init_args.start_phase_deg=120
+# -- same room, different entry; if recognition survives, the
+# detected pose is the bat's situation in the room.
+# The foil: env_interface=rooms_eval_foil.
+defaults:
+  - /monty: evidencegraph_exp1000_emin_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: evidence_echo
+  - /monty/sensor_module: echo
+  - /monty/connectivity: 1lm_1sonar
+  - /environment: bat_rooms
+  - /env_interface: rooms_eval
+  - /env_interface/transform: none
+  - /logging: basic_info_monty_runs
+
+experiment:
+  _target_: tbp.monty.frameworks.experiments.object_recognition_experiments.MontyObjectRecognitionExperiment
+  config:
+    show_sensor_output: false
+    max_train_steps: 40
+    max_eval_steps: 60
+    max_total_steps: 300
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ${path.expanduser:"~/tbp/results/monty/pretrained_models/my_trained_models/rooms_pretrain/pretrained"}
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: []
+    logging:
+      run_name: rooms_eval

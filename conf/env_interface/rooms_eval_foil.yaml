@@ -1,0 +1,12 @@
+# @package experiment.config
+# A corridor the bat never learned. Refusal is the only honest
+# verdict; the foil discipline applies to places too.
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - the_hall
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 0.0]}
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}

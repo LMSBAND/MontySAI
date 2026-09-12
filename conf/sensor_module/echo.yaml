@@ -1,0 +1,4 @@
+# @package experiment.config.monty_config.sensor_modules
+sensor_module_0:
+  _target_: audiomonty.echo_sm.EchoSM
+  sensor_module_id: sonar

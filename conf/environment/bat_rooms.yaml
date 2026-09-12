@@ -1,0 +1,9 @@
+# @package experiment.config.environment
+# Rooms as objects: the environment builds a room layout per episode
+# and flies the bat's patrol through it. start_phase_deg sets where
+# on the patrol the bat enters -- the pose experiment's knob.
+env_init_args:
+  listener_agent_id: agent_id_0
+  sample_rate: 44100.0
+  start_phase_deg: 0.0
+env_init_func: ${monty.class:audiomonty.bat_env.BatRoomEnvironment}
