@@ -426,7 +426,11 @@ drew is that the definition fails because it treats knowledge as a
 state satisfying conditions at a time, when it is the behavior of
 belief under continued sampling: belief is revised by the second,
 in parallel, across the sensory apparatus of a body, and knowledge
-is what remains standing. Gettier cases, on this reading, are not
+is what remains standing. Time here plays the role of Dennett's
+universal acid [11]: poured over a belief, it eats through every
+justification that is not attached to the fact, and no container
+of definition holds it. What the acid leaves behind is knowledge,
+and nothing else survives the pour. Gettier cases, on this reading, are not
 counterexamples to a definition; they are photographs of a process
 that has not yet run.
 
@@ -537,3 +541,5 @@ Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
    café as a perceived, not inferred, negation.
 10. Gettier, E. L. (1963). Is justified true belief knowledge?
     *Analysis*, 23(6), 121–123.
+11. Dennett, D. C. (1995). *Darwin's Dangerous Idea: Evolution and
+    the Meanings of Life*. Simon & Schuster. (Universal acid.)
