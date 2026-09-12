@@ -1,0 +1,18 @@
+# @package experiment.config
+# THE THIRD INVARIANCE: image-plane rotation. The camera looks down
+# the z axis, so euler (0,0,30) spins the creature's silhouette in
+# the image plane -- which in log-polar is a TRANSLATION along theta.
+# Learned upright, shown at 30 deg: if the frame is real, this is
+# pose, not a new object. Watch the seam: a graph straddling +-pi
+# tears (known wart, unpadded for now -- this run measures whether
+# it bites at 30 deg).
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - mug
+  - banana
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 30.0]}
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}

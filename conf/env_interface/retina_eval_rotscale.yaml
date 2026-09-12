@@ -1,0 +1,20 @@
+# @package experiment.config
+# THE TRIFECTA: rotation AND scale at once -- 30 deg in the image
+# plane at 1.5x the size. In log-polar that is one rigid translation
+# of the whole graph (dx = log2 1.5 octaves, dy = 30 deg). Thirty
+# years of computer vision engineering, asked of one coordinate
+# choice.
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - mug
+  - banana
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 30.0]}
+    scales:
+    - - 1.5
+      - 1.5
+      - 1.5
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}
