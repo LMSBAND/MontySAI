@@ -61,3 +61,37 @@ source-specific feature at the probed (moment, lag): timbre-at-lag
 or per-row structure. Queued next: the feedback experiment -- the
 LM biasing the sax's channels/lags top-down, prediction: the 60-66%
 whisper becomes a voice.
+
+
+## Closing the loop (2026-09-11, night): attention, and its price
+
+Bryan's directive: feedback from the model to the sense. Three
+stages, each measured:
+
+1. **Place-efferent (the MOC pathway)**: suppress the bass's cochlear
+   places (OHC gain x0.05 below 170 Hz -- the lesion knob under
+   different politics; the wire real brains use). Suppression landed
+   (in-band NAP -30%, mid-band untouched) and CHANGED NOTHING:
+   the bass's periodicity survives via harmonics at unsuppressed
+   places, which moreover share places with the sax. Finding: pitch
+   is not at a place; place-attention cannot unmask a periodicity.
+
+2. **Lag-window attention (readout level)**: the tracker searches
+   only the target register's lag band. Percept-level fit to the sax
+   memory: 16% -> 71% in the FULL mix. The whisper became a shout.
+   But MUTE jumped too (14% -> 68%): the harmony's shadow, again --
+   location cannot tell a sax from the chord it is playing.
+
+3. **The verdicts**: FULL attending -> leaning sax at timeout
+   (blind: confidently 'band'). MUTE attending -> CONFIDENTLY SAX in
+   25 steps. The false-positive trap that held 9/9 unbidden fired
+   the moment the system was told where to look. **Attention without
+   a discriminative feature is confirmation bias, measured.** The
+   current timbre tolerance (0.4 log-ratio) cannot separate comping
+   midrange from horn.
+
+The loop is closed and its first lesson is the biological one:
+top-down expectation manufactures percepts unless a source-specific
+feature polices it. Next component: not more attention -- a sharper
+timbre (or per-row structure) at the attended lag, tight enough to
+refuse the shadow.

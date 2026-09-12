@@ -45,7 +45,14 @@ class LesionedEar(Ear):
                  undamping_scale: float = 1.0,
                  ihc_tau_scale: float = 1.0,
                  keep_channels: int | None = None,
-                 open_loop: bool = False) -> None:
+                 open_loop: bool = False,
+                 efferent_suppress: tuple | None = None) -> None:
+        """efferent_suppress=(f_lo, f_hi, scale): the MOC pathway --
+        the brain's wire back into the cochlea, which works by
+        suppressing outer-hair-cell gain over a place range. Same
+        physical knob as OHC loss; different politics: a lesion is
+        fate, an efferent is a decision. This is how attention
+        reaches the sensor in actual ears."""
         super().__init__(sample_rate)
         self._open_loop = bool(open_loop)
 
@@ -64,6 +71,14 @@ class LesionedEar(Ear):
             cc = self.cfp.ears[0].car_coeffs
             cc.zr_coeffs = cc.zr_coeffs * float(undamping_scale)
             # state was seeded from the healthy zr; reseed
+            self.cfp.ears[0].car_state.zb_memory = cc.zr_coeffs.copy()
+
+        if efferent_suppress is not None:
+            f_lo, f_hi, scale = efferent_suppress
+            sel = (R.poles >= float(f_lo)) & (R.poles <= float(f_hi))
+            cc = self.cfp.ears[0].car_coeffs
+            cc.zr_coeffs = np.where(sel, cc.zr_coeffs * float(scale),
+                                    cc.zr_coeffs)
             self.cfp.ears[0].car_state.zb_memory = cc.zr_coeffs.copy()
 
         self._mask = np.ones(self.n_ch, dtype=bool)

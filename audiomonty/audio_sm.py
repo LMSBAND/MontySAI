@@ -79,6 +79,7 @@ class AudioSM:
         save_raw_obs: bool = False,
         lesion: dict | None = None,
         timbre_source: str = "raw",
+        attend: tuple | None = None,
     ) -> None:
         """lesion: kwargs for lesions.LesionedEar (dead_band,
         undamping_scale, ihc_tau_scale, keep_channels, open_loop).
@@ -100,6 +101,7 @@ class AudioSM:
         self._sample_rate = sample_rate
         self._lesion = dict(lesion) if lesion else None
         self._timbre_source = timbre_source
+        self._attend = attend
         self._ear = self._make_ear()
         self.state: SensorState | None = None
         self.is_exploring = False
@@ -153,10 +155,15 @@ class AudioSM:
     def _percept_from_image(self, img: np.ndarray, wave: np.ndarray
                             ) -> Message:
         mg = img.sum(axis=0)
-        lo, hi = R.LO, R.HI
+        if self._attend is not None:
+            f_lo, f_hi = self._attend
+            lo = max(R.LO, int(self._sample_rate / float(f_hi)))
+            hi = min(R.HI, int(self._sample_rate / float(f_lo)))
+        else:
+            lo, hi = R.LO, R.HI
         seg = mg[lo:hi + 1]
         mean = float(seg.mean()) if seg.size else 0.0
-        lag = R.first_peak(mg)
+        lag = _first_peak_window(mg, lo, hi)
 
         salient = (
             lag is not None
@@ -253,6 +260,24 @@ class AudioSM:
             sender_type="SM",
             process_features_in_lm=True,
         )
+
+
+def _first_peak_window(mg, lo, hi, thr=0.80):
+    """The tracker's rule, on an arbitrary lag window (attention)."""
+    seg = mg[lo:hi + 1]
+    if not seg.size:
+        return None
+    best = seg.max()
+    if best <= 0:
+        return None
+    for i in range(lo + 1, hi):
+        if mg[i] >= thr * best and mg[i] > mg[i - 1] and mg[i] >= mg[i + 1]:
+            ym, y0, yp = mg[i - 1], mg[i], mg[i + 1]
+            den = ym - 2 * y0 + yp
+            d = 0.0 if den == 0 else max(-0.5, min(0.5,
+                                                   0.5 * (ym - yp) / den))
+            return i + d
+    return None
 
 
 TIMBRE_HARMONICS = (2, 3, 4, 5)
