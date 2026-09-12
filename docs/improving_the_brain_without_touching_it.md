@@ -1,228 +1,344 @@
-# Improving the brain without touching it
+# Multimodal sensor integration and termination criteria in Monty: an external evaluation
 
-**TL;DR** — We gave Monty three senses through its stock extension
-sockets (zero edits to tbp.monty), then pushed the federation with
-adversarial foils and found the false IDs come from the verdict
-machinery, not the sensors: (1) the stock quorum counts *confident*
-LMs, not *agreeing* ones — it convicted on two senses naming
-different objects; (2) first-winner termination forecloses evidence
-that accumulates slower than confidence; (3) a working sense that
-finds *no trace* of the candidate has no way to testify against it.
-Two subclass-sized fixes — consensus-on-identity and a relative
-expected-signal veto — took foil false-identifications **3 → 1 → 0**
-while learned objects stayed recognized.
+## Abstract
 
-**Scope**: this document covers 2026-09-12 — the eye, the fingertip,
-the eye-vs-eye duel, and the verdict-machinery work. The ear it
-builds on (key-is-pose, the lesion studies, the riff evals) and the
-real-room sonar takes are earlier work in this repo, 2026-09-10
-onward; see `figures/` and `docs/`. Every claim below has a commit,
-a figure, and its controls here.
+We report an evaluation of the Monty reference implementation
+(tbp.monty) conducted entirely through its public extension
+interfaces; no upstream source was modified. Three sensor modules
+were added: a cochlear model (CARFAC with a stabilized auditory
+image), a log-polar retinal model, and a depth-only tactile model.
+Each encodes percept location in a reference frame chosen so that a
+class of physical transformations becomes a translation, allowing
+the unmodified evidence-matching learning module to treat those
+transformations as pose. In a controlled comparison against the
+reference visual percept recipe (metric 3D locations with HSV and
+curvature features) under identical patch input, learning-module
+configuration, and fixation policy, the log-polar representation
+identified 12 of 12 transformed presentations (scale 1.5×, in-plane
+rotation 30°, their composition, and out-of-plane tilt to 60°)
+with no false identifications; the metric representation identified
+5 of 12, also without false identifications. Adversarial probes
+with unlearned objects then exposed three failure modes in the
+system-level verdict machinery rather than in any sensor: the stock
+termination criterion counts confident learning modules without
+requiring agreement on identity; episode termination at the first
+confident match forecloses evidence that accumulates more slowly;
+and a functioning sensor that finds no trace of the candidate
+object has no mechanism for contributing negative evidence. Two
+modifications, implemented as a subclass and enabled by
+configuration, reduced false identifications on the probe set from
+three to zero while preserving recognition of learned objects. We
+discuss the implications for termination, cross-modal voting, and
+the representation of absence.
 
-We built Monty two new senses, ran its own eye against ours in a
-controlled duel, then pushed the whole federation until it lied to
-us — and found that the lies came from the *verdict machinery*, not
-the sensors. We fixed that machinery through Monty's own extension
-sockets, took the false-identification count from 3 to 0 on
-adversarial foils, and paid the costs openly. This document is the
-why, in all the details, because the details are where the theory
-claims live.
+**Scope.** This document covers the work of 2026-09-12: the retinal
+and tactile sensors, the representation comparison, and the
+termination analysis. The auditory results it builds on
+(transposition invariance, cochlear lesion studies, evaluations on
+recorded guitar) and the acoustic ranging measurements in a
+physical room were carried out from 2026-09-10 onward and are
+documented elsewhere in this repository. All claims below
+correspond to commits, figures, and control conditions available
+here.
 
----
+## 1. Integration method
 
-## 1. What was plugged in (the plumbing was all the work)
+All components attach to existing extension points. The findings in
+Section 4 therefore concern default behaviors of the released
+system, not limitations of its extensibility; the architecture
+permitted every modification described below.
 
-Everything below went through stock extension points. This matters:
-the critique that follows is aimed at *defaults doing theoretical
-work*, not at the code — the architecture allowed its own repair,
-which is to its credit.
-
-| Socket | What we hung on it |
+| Extension point | Component |
 |---|---|
-| duck-typed SensorModule contract (`step / update_state / reset / state_dict`) | `AudioSM` (CARFAC+SAI ear), `RetinaSM` (log-polar eye), `TouchSM` (depth-only fingertip), `CamSM` (reference-eye control arm) |
-| `Environment` wrapping | `AudioEnvironment` — objects get voices; the inner MuJoCo sim never knows |
-| `monty_class` config key | `MontyConsensus` — a subclass overriding one decision (`check_terminal_conditions`) |
-| `match_criterion` config | consensus size N rides the existing `count` plumbing |
-| `lm_to_lm_vote_matrix` | 3 LMs, all-to-all — Monty's own `_combine_votes` runs the federation |
-| hydra conf tree | our yamls symlinked in; conditions (dark/mute/numb/scaled/rotated/tilted/foils) are config swaps, never code |
+| SensorModule contract (`step`, `update_state`, `reset`, `state_dict`) | AudioSM (CARFAC + stabilized auditory image), RetinaSM (log-polar), TouchSM (depth-only), CamSM (reference-recipe control) |
+| Environment composition | AudioEnvironment, which attaches acoustic sources to named objects and renders at the agent pose; the wrapped simulator is unaware of the addition |
+| `monty_class` configuration key | MontyConsensus, a subclass overriding `check_terminal_conditions` only |
+| `match_criterion` configuration | the consensus size N reuses the existing `count` parameter |
+| `lm_to_lm_vote_matrix` | three learning modules with all-to-all voting, executed by the unmodified `_combine_votes` |
+| Hydra configuration tree | all experimental conditions (illumination, audibility, tactile availability, scale, rotation, tilt, probe objects) are configuration changes; no condition is implemented in code |
 
-The three senses share one design recipe, proven three times:
-**pick the reference frame where the transformation you fear becomes
-a translation; keep the features few and physical; selftest against
-the raw simulator; make every claim as a Monty verdict; ship the
-ablation matrix.**
+Each sensor follows the same design procedure: select a location
+frame in which an anticipated transformation acts as a translation;
+restrict features to a small number of physically interpretable
+quantities; validate the sensor against the raw simulator before
+any learning-module involvement; state every recognition claim as a
+learning-module verdict; and accompany each claim with an ablation
+matrix.
 
-- **Ear**: location = (log-lag octaves, cochlear place). Transposition
-  is translation → *key is pose* (LM verdict, real guitars).
-- **Eye**: location = (log-r octaves, theta) about a fixated fovea.
-  Scale and image rotation are translations → *scale is pose,
-  rotation is pose*. The LM recognized 1.5× and 30°-rotated objects
-  as sole hypotheses and reported `scale 1.0` — no scale code exists
-  anywhere to cheat with; the rotated banana's detected pose read
-  ≈ −27°, a rotation the LM measured without being told.
-- **Touch**: location = true meters via pinhole; depth only
-  (photon-free by construction), reach-limited to 0.45 m. The reach
-  limit is physics we measured, not decoration: our real-room sonar
-  takes (SM57, click track, tape measure) showed the ear jams itself
-  inside ~0.5 m — its own emission owns the near field. Touch owns
-  the donut hole.
+The three frames:
 
-Triad result: 7 conditions × 2 creatures = **14/14**, including each
-sense alone — touch recognized both creatures in dark silence.
+- **Auditory.** Location is (log-lag in octaves, cochlear place).
+  Pitch transposition is a translation along the log-lag axis, and
+  the learning module recognizes transposed material as the same
+  object at a different pose. This was previously verified on
+  synthetic tones and on recorded guitar performances.
+- **Retinal.** Location is (log eccentricity in octaves, polar
+  angle) about a fixation point. Image scaling and image-plane
+  rotation are translations along the two axes. The environment is
+  static, so spatial extent is produced by an internal fixation
+  sequence: at each step the sensor attends to the most salient
+  unvisited cell, with inhibition of return reset per episode.
+- **Tactile.** Location is the contact point in meters, recovered
+  by a pinhole model from the depth map. The sensor reads depth
+  only, so it is independent of illumination by construction, and
+  it reports nothing beyond a reach limit of 0.45 m. The reach
+  limit reflects a measured property of the acoustic channel: in
+  recordings made in a physical room (a dynamic microphone and a
+  click track, with distances taped), ranging fails inside
+  approximately 0.5 m because the emission masks its own near
+  field. The tactile modality covers the region where sonar is
+  self-masking.
 
-## 2. The duel (and the audit that made it unimpeachable)
+With three learning modules voting, the system identified both
+learned objects under seven sensory conditions (all senses; each
+sense disabled in turn; each sense operating alone), fourteen of
+fourteen episodes, including tactile-only identification in
+darkness and silence.
 
-Same 64×64 patch, same LM settings, same saccade privilege — only
-the coordinate choice differed between our log-polar eye and a
-faithful stand-in for the reference CameraSM (3D metric locations,
-normal/curvature pose, HSV). Why a stand-in and not the class
-itself: `ObservationProcessor.process` is welded to the transform
-stack's observation shape (`semantic_3d`, `sensor_frame_data`,
-`cam_to_world`) and reads the simulator's *semantic channel* for
-on-object — an oracle our sensors don't get. The stand-in
-reimplements its percept recipe on raw rgba+depth with the same
-walk ours uses. Known limitation, stated plainly: we have not
-benchmarked the stand-in against the original on their stock rig;
-until then, "their eye" means "their percept recipe on our skull."
+## 2. Comparison of visual representations
 
-Audit trail, in order: pose sampling verified stock
-(`initial_possible_poses='informed'`; `max_nneighbors` raised 3→10
-*in their favor*). HSV tolerance verified stock verbatim. Feature
-weights found to be OURS — at their stock `[2, 0.5, 0.5]` a false
-identification we'd initially reported **vanished**, and we retracted
-it on the figure itself. Final, fully stock: **ours 12/12, theirs
-5/12, zero false IDs on either side**, across in-plane scale,
-rotation, their composition, and out-of-plane tilt to 60° (which was
-pre-registered as the metric eye's home turf; it refused all four
-tilt cells instead).
+The comparison isolates the location frame as the only independent
+variable. Both visual sensors receive the same 64×64 patch, use the
+same fixation sequence, and feed identically configured evidence
+learning modules. CamSM implements the reference percept recipe:
+metric 3D locations from depth, surface normal and curvature from
+local geometry, HSV color as the feature.
 
-The claim that survives: *the coordinate choice is the eye.* One
-remap buys translation, scale, and rotation invariance, certified by
-the learning module rather than by patch correlation.
+CamSM is a reimplementation rather than the reference class itself
+because `ObservationProcessor.process` requires the observation
+shape produced by the transform stack (`semantic_3d`,
+`sensor_frame_data`, `cam_to_world`) and reads the simulator's
+semantic channel to determine object membership, an oracle
+unavailable to the other sensors in this study. We have not
+benchmarked the reimplementation against the original on its own
+stock configuration; consequently, "the reference recipe" here
+means that recipe operating under this study's fixation policy and
+input, not the released class in its native harness.
 
-## 3. Then we made it refuse, and found the real problem
+Configuration parity was audited after an initial run. Pose
+hypothesis sampling was stock (`initial_possible_poses:
+"informed"`); `max_nneighbors` was set to 10 where the stock value
+is 3, a change favoring the reference recipe; the HSV tolerance
+([0.1, 0.2, 0.2]) matched the stock benchmark configuration
+verbatim. The feature weights in the initial run did not (equal
+weights rather than the stock [2, 0.5, 0.5], which emphasizes hue).
+Under equal weights the reference recipe produced one false
+identification (a rotated banana reported as a mug). Under its
+stock weights that error did not recur, and we withdrew the
+finding; the final comparison uses stock weights throughout.
 
-A perfect score on a test that cannot fail is not evidence of
-honesty (we learned this on saxophones). So: three foils the system
-never learned — bowl (round, mug-family), apple (mug-red, round),
-wrench (elongated). Refusal is the only honest verdict.
+Results over eight in-plane presentations (upright, 1.5× scale,
+30° rotation, both) and four out-of-plane presentations (30° and
+60° tilt): the log-polar representation identified 12 of 12, with
+detection at 21 to 31 steps; the metric representation identified 5
+of 12. Neither produced a false identification on this learned set.
+The metric recipe's successes on the scaled and rotated mug are
+attributable to degeneracy rather than invariance: a surface of
+revolution with uniform color matches itself under scaling and
+rotation. The out-of-plane conditions had been registered in
+advance as the expected advantage of the metric representation,
+since a log-polar frame has no depth axis; the metric recipe
+instead declined all four, and the log-polar recipe identified all
+four. We do not claim this generalizes beyond the two objects
+tested.
 
-Three findings, each a receipt against the verdict machinery:
+## 3. Probes with unlearned objects
 
-**Finding 1 — the quorum counts confidence, not consensus.**
-On the silent bowl, the eye matched "mug" and touch matched
-"banana". Stock `AnyLMsMatch(count=2)` declared MATCH. Two witnesses
-naming different suspects convicted. The criterion never asks what
-the LMs are confident *about*.
+A recognition score obtained only on learned objects cannot
+distinguish accuracy from an absence of alternatives. Three objects
+never presented during training were therefore evaluated: a bowl
+(a surface of revolution, like the mug), an apple (similar in hue
+to the mug), and an adjustable wrench (elongated, like the banana).
+For an unlearned object, declining to identify is the only correct
+outcome.
 
-**Finding 2 — first-winner termination forecloses slow evidence.**
-Verdicts gate at `min_eval_steps`; fast senses adjourn the episode
-at the gate. Our ear could only identify the mug when run alone —
-its pose-ambiguous drone needs the symmetry route, and in mixed runs
-zero symmetry events fire before the meeting ends. Episodes that
-*stop at the first confident answer* structurally cannot hear
-dissent that takes longer than confidence.
+Single-sensor results: the log-polar eye identified the bowl and
+the apple as the mug and declined only the wrench; the metric
+recipe identified all three as the mug. Both representations
+therefore admit the same failure class. The mug is the most
+self-similar learned object in either frame (a surface of
+revolution in metric space; a ring, uniform in polar angle, in
+log-polar space), and unlearned objects of approximately round
+silhouette accrue evidence for it. A tilt sweep to 90° found no
+comparable failure boundary for learned objects: the log-polar eye
+continued to identify both creatures, declining only once (the mug
+at 80°).
 
-**Finding 3 — absence has no vote.**
-The apple: round to the eye, round to the finger — both matched
-"mug", honest cross-modal agreement on a wrong answer. The only
-witness against it was the ear, and the ear had nothing to say,
-because a sense that detects nothing salient sends nothing at all.
-But the mug hypothesis *predicts a 147 Hz tower*, and the ear was
-listening to a scene that did not contain one. That is testimony,
-and the machinery had no way to hear it.
+## 4. Findings concerning the verdict machinery
 
-## 4. The fixes (both are subclass-sized)
+Running the probes through the three-sensor system produced three
+observations about system-level behavior. Each is reproducible from
+the configurations in this repository.
 
-**Consensus** (`audiomonty/consensus.py`): match ⇔ N matched LMs
-name the *same* object; confident dissent blocks; a lone opinion
-waits. Bowl: blocked (mug-vs-banana disagreement). Wrench: withheld
-(lone opinion never seconded). Creatures: still recognized.
+**4.1. The stock criterion aggregates confidence without requiring
+agreement on identity.** On the bowl, the visual module reached the
+terminal state "match" with the identity mug while the tactile
+module reached "match" with the identity banana. `AnyLMsMatch`
+with `count=2` reports a system-level match under these conditions,
+since it counts modules in the "match" state without comparing
+their detected objects. Two modules confident of different
+identities satisfied the criterion.
 
-**Expected-signal veto** (same file): silence isn't silence — it's
-no sound *compared to the sound that is present*. A functioning
-sense (not dark, not numb) that has a learned graph for the
-candidate, but whose evidence sits below 25% of the supporting
-senses' level, testifies AGAINST. The absolute-zero version failed
-first and the failure proved the thesis: even our "silent" world
-gives the ear 1.08 of junk evidence off the CARFAC startup
-transient. Absence is relative. Apple: ear sees 1.08 for "mug" vs
-supporters' 6–11 — **vetoed**.
+**4.2. Termination at the first confident match forecloses slower
+evidence.** Verdicts cannot be issued before `min_eval_steps`; in
+practice the visual and tactile modules are ready at that boundary
+and the episode ends there. The auditory module identifies the
+humming mug only when run alone: its percept for a steady tone is
+nearly a point, all pose hypotheses are equivalent, and the module
+requires the symmetry-detection path, which needs additional steps
+of stable evidence. In mixed runs no symmetry event fires before
+termination. The evidence was available; the episode structure
+discarded it.
 
-Scorecard across the three criteria: **3 false → 1 false → 0
-false.** Costs on the table: a *muted* mug is now withheld too — a
-working ear that hears a scene with no hum in it vetoes, because the
-hum was part of what "mug" meant. A *dark* eye still abstains
-cleanly. The taxonomy doing the work is three-way and it is the
-whole point:
+**4.3. A functioning sensor cannot contribute negative evidence.**
+On the apple, the visual and tactile modules agreed on the mug, an
+error of honest degeneracy in both frames. The auditory module was
+operating throughout and its scene contained no spectral structure
+at the location the mug hypothesis predicts (a fundamental near
+147 Hz). Under the stock protocol this module simply sends no
+messages, and its lack of corroboration carries no weight. The
+observation "the predicted signal is not present in an otherwise
+measured scene" has no representation.
 
-> **channel absent** (no data) ≠ **sensed absence** (data of no) ≠
-> **sensed presence**. Conflating the first two is what let the
-> apple through.
+## 5. Modifications
 
-Bonus: the relative floor retired Finding 2's race for free — a slow
-ear that is genuinely hearing the drone clears 25% easily and never
-vetoes; only an ear hearing nothing of the sort testifies.
+Both changes are implemented in one subclass
+(`audiomonty/consensus.py`) and enabled by configuration.
 
-## 5. What we think this means for the theory
+**Consensus on identity.** The system-level match requires at least
+N modules in the "match" state naming the same object, and it is
+blocked by any module in the "match" state naming a different
+object. A single confident module below N does not terminate the
+episode. Under this criterion the bowl is blocked by the
+disagreement between the visual and tactile identifications, and
+the wrench, supported by one module only, does not terminate.
+Learned objects remain identified (the mug by two agreeing modules,
+the banana by three).
 
-1. **Brains don't guess and stop; they guess and update.** The
-   terminal state is a harness convenience doing theoretical work it
-   hasn't earned. Every failure above is a symptom of stopping:
-   first-winner races, dissent foreclosed, absence unheard. A
-   recognizer that is not allowed to terminate (we're planning one
-   as a realtime audio plugin, where the stream never ends) is
-   forced to hold verdicts as decaying, dethronable state — which is
-   what the theory says cortex does.
-2. **The decisive sense is pair-relative.** The apple was caught by
-   the ear, the bowl by touch's dissent, the wrench by the eye's
-   refusal — in each case, the channel where the false hypothesis
-   made its sharpest falsifiable prediction. Identity lives where
-   the hypothesis sticks its neck out. This requires testing a
-   hypothesis against senses that did *not* vote for it, which the
-   current message flow has no path for.
-3. **Voiced-vs-voiceless worlds are platonic.** Our own sonar
-   campaign ranged voiceless things all night (a moth, a wall, a
-   human at 23 inches) — everything scatters the acoustic
-   illuminant. Ambient-noise acoustics with all objects as
-   reflectors is queued; after that, the ear discriminates apple
-   from mug by scattering signature instead of by veto, and the
-   platonic lie is never told in the first place.
-4. **Degeneracy is frame-relative and every frame has its mugs.**
-   Their eye's mug (surface of revolution) and our eye's mug
-   (theta-uniform ring) are the same object being maximally
-   self-similar in two different coordinates. Novel blobs fall into
-   the most degenerate learned object in *any* single frame — which
-   is exactly why the fix has to live at the federation level, not
-   in a better sensor.
+**A relative test for expected signals.** The apple requires a
+further principle: absence is relative to the scene. An initial
+implementation tested the dissenting module's evidence against
+zero and failed, instructively: even in a nominally silent
+environment the auditory module accrues a small positive evidence
+value (1.08 in these runs) from the cochlear model's startup
+transient. The operative test is therefore relative. A module that
+(a) is functioning (its sensor is not disabled), (b) possesses a
+learned graph for the candidate object, and (c) holds evidence for
+that candidate below a fixed fraction (0.25) of the mean evidence
+of the supporting modules, vetoes the verdict. On the apple, the
+auditory module held 1.08 against supporting evidence of 6 to 11,
+and the identification was blocked.
 
-## 6. Open questions we'd genuinely like answers to
+Across the three criteria (stock, consensus, consensus with the
+expected-signal test) the false identifications on the probe set
+were 3, 1, and 0 respectively.
 
-- Where should expected-signal dissent live? We bolted it onto the
-  termination decision because that's the socket we had. It smells
-  like it belongs in the voting protocol — a vote *against* a
-  hypothesis from an LM whose modality that hypothesis makes
-  predictions for.
-- Does anything in the roadmap give an LM a notion of absence — a
-  prediction error for "the feature I expected at this location is
-  not here" that carries evidence weight, not just no update?
-- LM-level time is the same question wearing another hat: tempo is
-  currently invisible to our audio graphs (same object at any
-  speed), and absence-over-time (the rest, the gap, the mute) is
-  where music keeps most of its information.
+The modified criterion has a measurable cost, which we regard as
+correct behavior rather than a defect. With audio removed from the
+environment, the auditory module vetoes the identification of the
+visually and tactually normal mug: the sensor is functioning, the
+graph predicts a hum, and the scene contains none. Under this
+protocol an object's acoustic signature is part of its identity. A
+disabled sensor, by contrast, abstains: darkness does not block
+identification, because a sensor that receives no input is
+distinguished from a sensor that measures a scene lacking the
+predicted structure. The distinction between an absent channel and
+a measured absence is the substance of both modifications.
 
-## Reproduce
+The relative threshold also resolves the race of Section 4.2
+without further machinery: an auditory module that is genuinely
+accumulating evidence for the humming mug, but has not yet reached
+its own terminal state, holds evidence well above the fraction and
+does not veto.
+
+## 6. Interpretation
+
+1. **Termination is doing theoretical work.** The failures of
+   Section 4 share a cause: the episode ends at the first
+   confident answer. A recognition process with no terminal state,
+   holding its verdict as a continuously revised quantity, would
+   not exhibit 4.2 at all and would convert 4.1 and 4.3 from
+   structural failures into transient ones. We consider the
+   terminal state an artifact of the evaluation harness rather
+   than a commitment of the underlying theory, and we intend to
+   test this by implementing a recognizer in a context that cannot
+   terminate (a real-time audio process).
+
+2. **The decisive modality is pair-relative.** Each probe was
+   rejected by the channel in which the false hypothesis made its
+   most specific prediction: the apple by audition (the hum), the
+   bowl by tactile shape, the wrench by visual contour. No fixed
+   ranking of modalities describes this; the discriminating channel
+   is the one with the largest divergence between predicted and
+   measured signal for the specific pair of hypotheses in play.
+   Exploiting this requires testing a hypothesis against modalities
+   that did not vote for it, for which the current message flow has
+   no path.
+
+3. **Silence is a measurement.** The startup-transient failure of
+   the absolute threshold is a small demonstration of a general
+   point: a functioning sensor never delivers nothing; it delivers
+   a scene, and the candidate object predicts specific structure
+   standing above that scene's floor. The present environment
+   assigns voices to some objects and leaves the rest acoustically
+   absent, which is physically wrong: in the room recordings noted
+   above, every object measured (a wall, a person, a hand) affected
+   the acoustic field without possessing a voice. Replacing the
+   voiced/voiceless distinction with an ambient acoustic field that
+   all objects scatter is planned; under that model the apple would
+   be discriminated by its scattering signature rather than by
+   veto.
+
+4. **Degeneracy is frame-relative, and every frame has degenerate
+   objects.** The metric frame's mug and the log-polar frame's mug
+   are the same object at its most self-similar in two coordinate
+   systems. Unlearned objects fall toward the most degenerate
+   learned object of any single frame. This locates the remedy at
+   the level of cross-modal aggregation rather than in any improved
+   single sensor.
+
+## 7. Limitations
+
+The object set is two learned and three probe objects; none of the
+quantitative results should be assumed to generalize beyond it. The
+fixation policy uses the depth map to locate the object,
+a segmentation the sensors do not earn (the reference pipeline uses
+the semantic channel for the same purpose, a stronger oracle; the
+comparison of Section 2 is therefore internally consistent). CamSM
+has not been validated against the reference class on its native
+benchmark. The veto fraction (0.25) was set once and not swept. The
+consensus modifications are implemented at the termination decision
+because that is the available socket; we argue below they belong in
+the voting protocol.
+
+## 8. Questions for the maintainers
+
+1. Where should negative evidence live? The expected-signal test is
+   attached to termination for lack of a better socket. Its natural
+   home appears to be the voting protocol: a vote against a
+   hypothesis, from a module whose modality that hypothesis makes
+   predictions for.
+2. Is there a planned representation for measured absence, that is,
+   a prediction error carrying evidence weight when an expected
+   feature is not found at a location, as distinct from the absence
+   of an update?
+3. Learning-module time appears to be the same question in another
+   form: the present auditory graphs are invariant to tempo (the
+   same object at any playback rate), and rests and gaps, which are
+   measured absences over time, carry no evidence.
+
+## Reproducibility
 
 ```
-# senses + triad
+# sensors and the three-module system
 uv run python run.py experiment=triad_pretrain_2creatures
-uv run python run.py experiment=triad_eval_2creatures          # 14/14 matrix via dark/mute/numb overrides
-# duel
+uv run python run.py experiment=triad_eval_2creatures          # ablation matrix via dark/mute/numb overrides
+# representation comparison
 uv run python run.py experiment=cam_pretrain_2creatures
 uv run python run.py experiment=cam_eval_2creatures env_interface=retina_eval_{scaled,rotated,rotscale,tilted,tilted60}
-# the verdict-machinery findings and fixes
-uv run python run.py experiment=triad_eval_2creatures env_interface=retina_eval_foils   # finding 1
-uv run python run.py experiment=triad_eval_consensus  env_interface=retina_eval_foils   # 0 false
+# Section 4 findings and Section 5 modifications
+uv run python run.py experiment=triad_eval_2creatures env_interface=retina_eval_foils   # finding 4.1
+uv run python run.py experiment=triad_eval_consensus  env_interface=retina_eval_foils   # 0 false identifications
 ```
 
 Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
