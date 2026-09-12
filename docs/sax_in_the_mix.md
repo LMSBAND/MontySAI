@@ -95,3 +95,24 @@ top-down expectation manufactures percepts unless a source-specific
 feature polices it. Next component: not more attention -- a sharper
 timbre (or per-row structure) at the attended lag, tight enough to
 refuse the shadow.
+
+
+## The timbre diagnostic (what attention needs, measured)
+
+Can the current 4-number timbre police attention? NO, and the reason
+is structural: per-element sax-vs-shadow gaps are 0.04/0.03/0.04/0.27
+(tolerance 0.40 each) -- three of four numbers are identical between
+horn and comping shadow. And the sax matches ITS OWN centroid only
+40% of the time: a sax's harmonic recipe changes with the note it
+plays, so within-source variance swamps the between-source gap. No
+tolerance anywhere separates FULL from MUTE (best gap +4.8 points).
+
+Feature upgrade spec, from the data: (a) higher harmonics (h6-h10 --
+only h5 carried any signal; horns keep structure up high, plucked
+comping decays); (b) odd/even harmonic ratio (reed signature);
+(c) SUSTAIN SLOPE at the attended lag across frames -- a horn holds
+and swells where comping chords decay; likely the sharpest single
+cue and it is temporal, which this whole architecture is built to
+honor; (d) pitch-conditioning (compare timbre against the memory
+node's own register, not a global centroid -- the node-local timbre
+the graph already stores, which the acceptance test above ignored).
