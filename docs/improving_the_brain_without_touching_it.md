@@ -9,10 +9,10 @@ Figures referenced by repository path.
 ## Abstract
 
 We report an evaluation of the Monty reference implementation
-(tbp.monty) conducted entirely through its public extension
-interfaces; no upstream source was modified. Three sensor modules
-were added: a cochlear model (CARFAC with a stabilized auditory
-image), a log-polar retinal model, and a depth-only tactile model.
+[4, 5] conducted entirely through its public extension interfaces;
+no upstream source was modified. Three sensor modules were added: a
+cochlear model (CARFAC [1] with a stabilized auditory image [2]), a
+log-polar retinal model [3], and a depth-only tactile model.
 Each encodes percept location in a reference frame chosen so that a
 class of physical transformations becomes a translation, allowing
 the unmodified evidence-matching learning module to treat those
@@ -99,7 +99,14 @@ With three learning modules voting, the system identified both
 learned objects under seven sensory conditions (all senses; each
 sense disabled in turn; each sense operating alone), fourteen of
 fourteen episodes, including tactile-only identification in
-darkness and silence.
+darkness and silence (Figure 1). The acoustic ranging measurements
+motivating the tactile reach limit are shown in Figure 2.
+
+![Figure 1. The three-sensor ablation matrix and the tactile
+contact clouds.](../figures/triad.png)
+
+![Figure 2. Acoustic ranging in a physical room: wall, person, and
+occluding hand, against taped distances.](../figures/real_sonar.png)
 
 ## 2. Comparison of visual representations
 
@@ -145,8 +152,12 @@ rotation. The out-of-plane conditions had been registered in
 advance as the expected advantage of the metric representation,
 since a log-polar frame has no depth axis; the metric recipe
 instead declined all four, and the log-polar recipe identified all
-four. We do not claim this generalizes beyond the two objects
-tested.
+four (Figure 3). We do not claim this generalizes beyond the two
+objects tested.
+
+![Figure 3. The representation comparison at stock configuration:
+12 of 12 against 5 of 12, no false identifications on the learned
+set.](../figures/eye_vs_eye.png)
 
 ## 3. Probes with unlearned objects
 
@@ -168,7 +179,11 @@ log-polar space), and unlearned objects of approximately round
 silhouette accrue evidence for it. A tilt sweep to 90° found no
 comparable failure boundary for learned objects: the log-polar eye
 continued to identify both learned objects, declining only once (the mug
-at 80°).
+at 80°). Figure 4 summarizes the probe results and the tilt sweep.
+
+![Figure 4. Probes with unlearned objects: both representations
+identify round foils as the mug; refusal follows contour geometry
+alone.](../figures/where_refusal_lives.png)
 
 ## 4. Findings concerning the verdict machinery
 
@@ -238,7 +253,10 @@ and the identification was blocked.
 
 Across the three criteria (stock, consensus, consensus with the
 expected-signal test) the false identifications on the probe set
-were 3, 1, and 0 respectively.
+were 3, 1, and 0 respectively (Figure 5).
+
+![Figure 5. Termination criteria compared on learned objects and
+probes: 3, 1, and 0 false identifications.](../figures/novelty_by_disagreement.png)
 
 The modified criterion has a measurable cost, which we regard as
 correct behavior rather than a defect. With audio removed from the
@@ -304,7 +322,88 @@ does not veto.
    the level of cross-modal aggregation rather than in any improved
    single sensor.
 
-## 7. Limitations
+## 7. Two remarks outside the engineering
+
+**7.1. Competence without comprehension.** Dennett's phrase [7]
+describes this work exactly, and we mean that as a finding rather
+than a disclaimer. The systems above recognize objects, localize
+themselves, refuse impostors, and register dissent, and at no point
+does anything in them understand anything. The learning module that
+recovered a 30° rotation it was never told about contains no
+concept of rotation; it is displacement bookkeeping over a graph.
+The veto that behaves like skepticism is a threshold on a ratio of
+two accumulators. The consensus rule that behaves like judicial
+caution is a counter and a string comparison. Dennett's claim is
+that this ordering is not an embarrassment but the actual
+architecture of mind: comprehension, where it exists, is composed
+of competences, and never the reverse. The thousand-brains program
+is one of the few research efforts that has made this bet
+explicitly, at the level of architecture, with the cortical column
+as the unit of competence. Our negative results sharpen the bet in
+a way we did not anticipate. Every failure documented in Section 4
+occurred at a point where the harness had implicitly assumed a
+comprehension it had never built: the stock criterion behaves as if
+the modules know they are supposed to be talking about the same
+object; the terminal state behaves as if the system knows it is
+finished; the message protocol behaves as if everyone knows that
+absence matters. None of them know any such thing, and the
+assumptions failed silently until an adversarial probe made them
+fail visibly. The repairs, when they came, were not injections of
+understanding; they were more competence, of the same humble kind
+(a comparison, a fraction, a third category in a taxonomy). The
+rationales for these mechanisms, meanwhile, float free of the
+system in Dennett's precise sense: the reason the veto works is
+that a mug's hum is part of what a mug is, and that reason is
+available to us and to no component of the system that enforces it.
+The degenerate objects of Section 6.4 mark the same boundary from
+the far side: a mug, to a competence, is wherever the bookkeeping
+becomes self-similar, and nothing in the system can notice that its
+own frame has a blind spot, because noticing is not among its
+competences. Comprehension, if it is ever to show up here, will
+presumably arrive the way everything else did: as one more
+mechanism with a rationale it cannot see.
+
+**7.2. Consciousness, ignored.** *(Placeholder; to be expanded by
+the first author. The following is a scaffold for that argument.)*
+A pattern ran through this work that we did not put there. The
+distinctions the engineering kept demanding are, one after another,
+the distinctions that discussions of consciousness usually claim as
+their subject matter. The difference between a sensor that receives
+nothing and a sensor that perceives an absence (Section 5) is the
+difference phenomenology has discussed since Sartre's Pierre, whose
+absence from the café is perceived, not inferred [9]. The fixation
+sequence that gives the retina its extent is a minimal attention
+mechanism. The consensus requirement is a unity-of-the-senses
+constraint, the binding problem restated as a termination
+criterion. The argument of Section 6.1, that recognition must be a
+continuously revised state rather than a terminated episode, is a
+claim about the specious present. In every case the distinction
+arrived as an engineering necessity, was implemented as arithmetic,
+and did its work with no phenomenal residue: nothing in Section 5
+required there to be something it is like [8] to be the auditory
+module, and the veto functions identically whether or not the
+lights are on inside. Two readings of this pattern are available,
+and the data do not choose between them. On the deflationary
+reading, the ease with which these distinctions were mechanized is
+evidence that consciousness-talk was always a description of
+functional structure, never an explanation of it; we keep finding
+the functional shadow because the shadow is all there ever was. On
+the opposite reading, the fact that adversarial pressure forces
+exactly these distinctions, in this order, out of a system that
+began with none of them, suggests that the itinerary of
+consciousness is not arbitrary: the problems themselves demand this
+shape, and a research program that ignores consciousness will
+nevertheless be made to rebuild its outline, mechanism by
+mechanism, by nothing more mysterious than foils and ablations. We
+take no position here on which reading is correct, only note that
+"ignored" has turned out to be a load-bearing methodology: at no
+point did any question of experience enter a design decision, and
+the resulting system nevertheless distinguishes measured absence
+from absent measurement, attends, binds, and refuses to conclude.
+Whether that is a debunking of the explananda or an independent
+rediscovery of them is, we think, the interesting question.
+
+## 8. Limitations
 
 The object set is two learned and three probe objects; none of the
 quantitative results should be assumed to generalize beyond it. The
@@ -318,7 +417,7 @@ consensus modifications are implemented at the termination decision
 because that is the available socket; we argue below they belong in
 the voting protocol.
 
-## 8. Questions for the maintainers
+## 9. Questions for the maintainers
 
 1. Where should negative evidence live? The expected-signal test is
    attached to termination for lack of a better socket. Its natural
@@ -361,22 +460,30 @@ Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
 
 ## References
 
-- Lyon, R. F. (2017). *Human and Machine Hearing: Extracting
-  Meaning from Sound*. Cambridge University Press. (CARFAC.)
-- Patterson, R. D., Robinson, K., Holdsworth, J., McKeown, D.,
-  Zhang, C., & Allerhand, M. (1992). Complex sounds and auditory
-  images. In *Auditory Physiology and Perception* (pp. 429–446).
-  (The stabilized auditory image.)
-- Schwartz, E. L. (1980). Computational anatomy and functional
-  architecture of striate cortex: a spatial mapping approach to
-  perceptual coding. *Vision Research*, 20(8), 645–669. (Log-polar
-  cortical mapping.)
-- Hawkins, J. (2021). *A Thousand Brains: A New Theory of
-  Intelligence*. Basic Books.
-- Clay, V., Leadholm, N., & Hawkins, J. (2024). The Thousand
-  Brains Project: a new paradigm for sensorimotor intelligence.
-  arXiv:2412.18354. (Monty.)
-- Ernst, M. O., & Banks, M. S. (2002). Humans integrate visual and
-  haptic information in a statistically optimal fashion. *Nature*,
-  415(6870), 429–433. (Reliability-weighted fusion, used in the
-  earlier percept-level study this work supersedes.)
+1. Lyon, R. F. (2017). *Human and Machine Hearing: Extracting
+   Meaning from Sound*. Cambridge University Press. (CARFAC.)
+2. Patterson, R. D., Robinson, K., Holdsworth, J., McKeown, D.,
+   Zhang, C., & Allerhand, M. (1992). Complex sounds and auditory
+   images. In *Auditory Physiology and Perception* (pp. 429–446).
+   (The stabilized auditory image.)
+3. Schwartz, E. L. (1980). Computational anatomy and functional
+   architecture of striate cortex: a spatial mapping approach to
+   perceptual coding. *Vision Research*, 20(8), 645–669. (Log-polar
+   cortical mapping.)
+4. Hawkins, J. (2021). *A Thousand Brains: A New Theory of
+   Intelligence*. Basic Books.
+5. Clay, V., Leadholm, N., & Hawkins, J. (2024). The Thousand
+   Brains Project: a new paradigm for sensorimotor intelligence.
+   arXiv:2412.18354. (Monty.)
+6. Ernst, M. O., & Banks, M. S. (2002). Humans integrate visual and
+   haptic information in a statistically optimal fashion. *Nature*,
+   415(6870), 429–433. (Reliability-weighted fusion, used in the
+   earlier percept-level study this work supersedes.)
+7. Dennett, D. C. (2017). *From Bacteria to Bach and Back: The
+   Evolution of Minds*. W. W. Norton. (Competence without
+   comprehension; free-floating rationales.)
+8. Nagel, T. (1974). What is it like to be a bat? *The
+   Philosophical Review*, 83(4), 435–450.
+9. Sartre, J.-P. (1943). *L'Être et le néant* (Being and
+   Nothingness), Part One, Ch. 1: the absence of Pierre from the
+   café as a perceived, not inferred, negation.
