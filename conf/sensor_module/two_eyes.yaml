@@ -1,0 +1,11 @@
+# @package experiment.config.monty_config.sensor_modules
+# TWO log-polar eyes (same band). The second reads the 128x128 "touch"
+# camera as an eye, not a fingertip -- different resolution, SAME band
+# (spatial contour). The crossover test: do two same-band witnesses
+# agree on the bowl and convict it?
+sensor_module_0:
+  _target_: audiomonty.retina_sm.RetinaSM
+  sensor_module_id: patch
+sensor_module_1:
+  _target_: audiomonty.retina_sm.RetinaSM
+  sensor_module_id: touch

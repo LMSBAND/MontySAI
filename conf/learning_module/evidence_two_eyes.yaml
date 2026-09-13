@@ -1,0 +1,41 @@
+# @package experiment.config.monty_config.learning_modules
+learning_module_0:
+  _target_: tbp.monty.frameworks.models.evidence_matching.learning_module.EvidenceGraphLM
+  max_match_distance: 0.01
+  tolerances:
+    patch:
+      opponent: ${np.array:[0.15, 0.15]}
+      shade: 0.25
+  feature_weights:
+    patch:
+      opponent: ${np.ones:2}
+      shade: 1.0
+  x_percent_threshold: 20
+  evidence_threshold_config: 80%
+  gsg:
+    _target_: tbp.monty.frameworks.models.goal_generation.EvidenceGoalGenerator
+    goal_tolerances:
+      location: 0.015
+    min_post_goal_success_steps: 5
+  hypotheses_updater_args:
+    max_nneighbors: 10
+learning_module_1:
+  _target_: tbp.monty.frameworks.models.evidence_matching.learning_module.EvidenceGraphLM
+  max_match_distance: 0.01
+  tolerances:
+    touch:
+      opponent: ${np.array:[0.15, 0.15]}
+      shade: 0.25
+  feature_weights:
+    touch:
+      opponent: ${np.ones:2}
+      shade: 1.0
+  x_percent_threshold: 20
+  evidence_threshold_config: 80%
+  gsg:
+    _target_: tbp.monty.frameworks.models.goal_generation.EvidenceGoalGenerator
+    goal_tolerances:
+      location: 0.015
+    min_post_goal_success_steps: 5
+  hypotheses_updater_args:
+    max_nneighbors: 10
