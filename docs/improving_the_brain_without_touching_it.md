@@ -44,8 +44,8 @@ and a moving head recovers, from the ears alone, an elevation that a
 stationary head cannot resolve. We discuss the implications for
 termination, cross-modal voting, and the representation of absence.
 A stress test shows the consensus mechanism inverts under correlated
-error — the population agrees most tightly when it is most wrong —
-which we read through the senses as a band-limited crossover:
+error. The population agrees most tightly when it is most wrong. We
+read this through the senses as a band-limited crossover:
 independence of witnesses is separation of physical bands, and the
 value of the three-module system was that its errors could not
 correlate.
@@ -304,10 +304,10 @@ all (it plateaus near 127 cm; thirty-two observers are no better
 than two) and the disagreement collapses (~44 cm): the observers
 agree four times more tightly while being roughly twice as wrong
 (Figure 6). A criterion that reads low disagreement as high
-confidence — which is what the consensus rule does — is therefore
-most confident in precisely the case where the whole population is
-wrong together. Correlation does not merely neutralize consensus; it
-inverts it into a confidence amplifier for a shared error.
+confidence, which is what the consensus rule does, is therefore most
+confident in precisely the case where the whole population is wrong
+together. Correlation does not merely neutralize consensus. It inverts
+it into a confidence amplifier for a shared error.
 
 ![Figure 6. Folie à deux: independent errors spread around the
 truth and average close; a shared bias produces a tight cluster off
@@ -377,23 +377,36 @@ the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
    eye has no channel by which to also fool the fingertip. The
    independence that consensus requires is, physically, this band
    separation. Two sensors in the same band are one witness with two
-   names — two log-polar eyes agree on the bowl, and add confidence
-   without adding accuracy — which is the failure mode of the
-   preceding point, and the mechanism of the echo chamber, restated
-   as engineering. The design rule follows: a sensor earns a seat in
+   names. Two log-polar eyes agree on the bowl and add confidence
+   without adding accuracy, which is the failure mode of the preceding
+   point and the mechanism of the echo chamber, restated as
+   engineering. The design rule follows: a sensor earns a seat in
    the federation only by failing differently from those already
    seated, that is, by occupying a band no seated sensor occupies.
-   The anisotropic-stretch probe (an object scaled on one axis
-   only, recognized by the log-polar eye all the same) is the same
-   point from
-   the far side: the log-polar eye recognizes a stretched object not
-   because it is invariant to the stretch but because the stretch is
+   The anisotropic-stretch probe makes the same point from the far
+   side. Scale an object on one axis only and the log-polar eye still
+   recognizes it, though the stretch is no translation in its frame
+   and it has no business being invariant to it. The stretch is
    written in a band the eye does not read, and the organ that would
-   catch it is the hand. This is, as far as we can tell, why
-   evolution built the senses as a crossover — so that when one band
-   is deceived, another stands in a band the deception cannot
-   reach — and it is the condition under which the humility result
-   of Section 5 is true rather than lucky. [6, 13]
+   catch it is the hand. That is, as best we can tell, why evolution
+   built the senses as a crossover, so that when one band is deceived
+   another is standing in a band the deception cannot reach. It is the
+   condition under which the humility result of Section 5 is true and
+   not merely lucky. [6, 13]
+
+   This is directly testable in the system, and it holds. Replacing
+   the fingertip with a second log-polar eye, the same 128×128 camera
+   read as an eye rather than a finger and a different sensor in the
+   same spatial-contour band, and running the identical consensus
+   rule, the two eyes agree and the system convicts the
+   bowl and the apple as the mug, the very foils the three-band
+   federation refused (Section 3, Section 5). The rule is unchanged;
+   only the diversity of bands is removed. Two witnesses in one band
+   manufacture agreement, and the consensus mechanism, which reads
+   agreement as confidence, reports its false verdict with the same
+   assurance it reports its true ones. The humility of the federation
+   was never in the count of its sensors; it was in the fact that
+   they could not be wrong together.
 
 ## 7. Echolocation, and the case for moving the sensor
 
@@ -656,11 +669,25 @@ uv run python run.py experiment=triad_eval_2creatures \
     env_interface=retina_eval_foils      # finding 4.1
 uv run python run.py experiment=triad_eval_consensus \
     env_interface=retina_eval_foils      # 0 false identifications
+
+# Falsifiers (Section 6). Each attacks one claim; four survive, two kill.
+python experiments/folie_a_deux.py       # consensus needs independence
+uv run python run.py experiment=retina_eval_scaled \
+    env_interface=retina_eval_stretch    # scale-is-pose vs anisotropy
+uv run python run.py experiment=retina_eval_scaled \
+    env_interface=retina_eval_so3        # eye duel vs compound rotation
+uv run python run.py experiment=rooms_eval \
+    +experiment.config.environment.env_init_args.patrol_radius=0.7
+                                         # rooms vs a different path
+uv run python run.py experiment=twoeye_pretrain
+uv run python run.py experiment=twoeye_eval \
+    env_interface=retina_eval_foils      # two same-band eyes convict
 ```
 
 Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
 `figures/where_refusal_lives.png`,
-`figures/novelty_by_disagreement.png`, `figures/real_sonar.png`.
+`figures/novelty_by_disagreement.png`, `figures/real_sonar.png`,
+`figures/folie_a_deux_3d.png`.
 
 ## References
 
