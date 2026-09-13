@@ -1,0 +1,16 @@
+# @package experiment.config
+# DEMOLITION: compound out-of-plane rotation (tilt + yaw at once), a
+# real rotation in depth. The paper's 12-5 win included tilt about ONE
+# axis; log-polar has no depth axis, so a compound SO(3) rotation is
+# where the metric eye should finally win -- or where the log-polar
+# claim is shown to have been scoped to easy rotations.
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - mug
+  - banana
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[50.0, 40.0, 0.0]}
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}

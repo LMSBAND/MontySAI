@@ -1,0 +1,20 @@
+# @package experiment.config
+# DEMOLITION: anisotropic scale. Log-polar linearizes ISOTROPIC scale
+# (uniform zoom = radial translation). Stretch one axis only (an
+# ellipse, not a bigger circle) and it is NOT a translation in
+# log-polar. If "scale is pose" is a law it dies here; if it survives,
+# the graph match is doing more than the frame.
+do_eval: true
+eval_env_interface_args:
+  object_names:
+  - mug
+  - banana
+  object_init_sampler:
+    _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
+    rotations:
+    - ${np.array:[0.0, 0.0, 0.0]}
+    scales:
+    - - 1.7
+      - 1.0
+      - 1.0
+eval_env_interface_class: ${monty.class:tbp.monty.experiment.environment.OneObjectPerEpisodeInterface}
