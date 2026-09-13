@@ -6,14 +6,14 @@ eval_env_interface_args:
   - banana
   - apple
   - bowl
-  - adjustable_wrench
   - baseball
   - cracker_box
   - mustard_bottle
-  - hammer
   - orange
   - pear
-  - fork
+  - lemon
+  - gelatin_box
+  - potted_meat_can
   object_init_sampler:
     _target_: tbp.monty.frameworks.environments.object_init_samplers.Predefined
     rotations:
