@@ -25,12 +25,12 @@ curvature features) under identical patch input, learning-module
 configuration, and fixation policy, the log-polar representation
 identified 12 of 12 transformed presentations (scale 1.5×, in-plane
 rotation 30°, their composition, and out-of-plane tilt to 60°)
-with no false identifications; the metric representation identified
+with no false identifications. The metric representation identified
 5 of 12, also without false identifications. Adversarial probes
 with unlearned objects then exposed three failure modes in the
 system-level verdict machinery rather than in any sensor: the stock
 termination criterion counts confident learning modules without
-requiring agreement on identity; episode termination at the first
+requiring agreement on identity. Episode termination at the first
 confident match forecloses evidence that accumulates more slowly;
 and a functioning sensor that finds no trace of the candidate
 object has no mechanism for contributing negative evidence. Two
@@ -64,7 +64,7 @@ here.
 
 All components attach to existing extension points. The findings in
 Section 4 therefore concern default behaviors of the released
-system, not limitations of its extensibility; the architecture
+system, not limitations of its extensibility. The architecture
 permitted every modification described below.
 
 | Extension point | Component |
@@ -137,33 +137,33 @@ shape produced by the transform stack (`semantic_3d`,
 semantic channel to determine object membership, an oracle
 unavailable to the other sensors in this study. We have not
 benchmarked the reimplementation against the original on its own
-stock configuration; consequently, "the reference recipe" here
+stock configuration. Consequently, "the reference recipe" here
 means that recipe operating under this study's fixation policy and
 input, not the released class in its native harness.
 
 Configuration parity was audited after an initial run. Pose
 hypothesis sampling was stock (`initial_possible_poses:
 "informed"`); `max_nneighbors` was set to 10 where the stock value
-is 3, a change favoring the reference recipe; the HSV tolerance
+is 3, a change favoring the reference recipe. The HSV tolerance
 ([0.1, 0.2, 0.2]) matched the stock benchmark configuration
 verbatim. The feature weights in the initial run did not (equal
 weights rather than the stock [2, 0.5, 0.5], which emphasizes hue).
 Under equal weights the reference recipe produced one false
 identification (a rotated banana reported as a mug). Under its
 stock weights that error did not recur, and we withdrew the
-finding; the final comparison uses stock weights throughout.
+finding. The final comparison uses stock weights throughout.
 
 Results over eight in-plane presentations (upright, 1.5× scale,
 30° rotation, both) and four out-of-plane presentations (30° and
 60° tilt): the log-polar representation identified 12 of 12, with
-detection at 21 to 31 steps; the metric representation identified 5
+detection at 21 to 31 steps. The metric representation identified 5
 of 12. Neither produced a false identification on this learned set.
 The metric recipe's successes on the scaled and rotated mug are
 attributable to degeneracy rather than invariance: a surface of
 revolution with uniform color matches itself under scaling and
 rotation. The out-of-plane conditions had been registered in
 advance as the expected advantage of the metric representation,
-since a log-polar frame has no depth axis; the metric recipe
+since a log-polar frame has no depth axis. The metric recipe
 instead declined all four, and the log-polar recipe identified all
 four (Figure 3). We do not claim this generalizes beyond the two
 objects tested.
@@ -183,7 +183,7 @@ For an unlearned object, declining to identify is the only correct
 outcome.
 
 Single-sensor results: the log-polar eye identified the bowl and
-the apple as the mug and declined only the wrench; the metric
+the apple as the mug and declined only the wrench. The metric
 recipe identified all three as the mug. Both representations
 therefore admit the same failure class. The mug is the most
 self-similar learned object in either frame (a surface of
@@ -195,7 +195,7 @@ continued to identify both learned objects, declining only once (the mug
 at 80°). Figure 4 summarizes the probe results and the tilt sweep.
 
 ![Figure 4. Probes with unlearned objects: both representations
-identify round foils as the mug; refusal follows contour geometry
+identify round foils as the mug. Refusal follows contour geometry
 alone.](../figures/where_refusal_lives.png)
 
 ## 4. Findings concerning the verdict machinery
@@ -221,7 +221,7 @@ humming mug only when run alone: its percept for a steady tone is
 nearly a point, all pose hypotheses are equivalent, and the module
 requires the symmetry-detection path, which needs additional steps
 of stable evidence. In mixed runs no symmetry event fires before
-termination. The evidence was available; the episode structure
+termination. The evidence was available. The episode structure
 discarded it.
 
 **4.3. A functioning sensor cannot contribute negative evidence.**
@@ -300,7 +300,7 @@ small private component. Under independence the consensus error
 falls with N as expected (105 cm at N=2 to 34 cm at N=32, over 200
 draws) and the observers' disagreement stays large and honest
 (~185 cm). Under correlation the consensus error does not fall at
-all (it plateaus near 127 cm; thirty-two observers are no better
+all (it plateaus near 127 cm, and thirty-two observers are no better
 than two) and the disagreement collapses (~44 cm): the observers
 agree four times more tightly while being roughly twice as wrong
 (Figure 6). A criterion that reads low disagreement as high
@@ -339,7 +339,7 @@ the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
 
 3. **Silence is a measurement.** The startup-transient failure of
    the absolute threshold is a small demonstration of a general
-   point: a functioning sensor never delivers nothing; it delivers
+   point: a functioning sensor never delivers nothing. It delivers
    a scene, and the candidate object predicts specific structure
    standing above that scene's floor. The present environment
    assigns voices to some objects and leaves the rest acoustically
@@ -365,7 +365,7 @@ the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
    aggregated channels fail independently. These two combine into
    the account of why the three-module system worked at all, which
    the engineering did not state. The value of the triad was never
-   three witnesses; it was three witnesses with different failure
+   three witnesses. It was three witnesses with different failure
    modes, and that was obtained for free by choosing three different
    organs. A world is a single physical field, and an organ is a
    band-pass filter on it: the eye passes a spatial band in which a
@@ -373,7 +373,7 @@ the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
    band in which they are not, the ear passes a spectral band in
    which one hums and the other is silent. Errors in different bands
    cannot correlate, because the signal that would carry the
-   correlation does not cross between bands; a ring that fools the
+   correlation does not cross between bands. A ring that fools the
    eye has no channel by which to also fool the fingertip. The
    independence that consensus requires is, physically, this band
    separation. Two sensors in the same band are one witness with two
@@ -394,6 +394,12 @@ the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
    condition under which the humility result of Section 5 is true and
    not merely lucky. [6, 13]
 
+![Figure 10. The same one-axis stretch seen by two bands. In the metric
+band a curvature sense reads, it nearly doubles the object's width. In
+the log-polar band the eye reads, the two objects intermingle and both
+are recognized as the mug. The eye is blind to the stretch, not
+invariant to it.](../figures/stretch_two_bands_3d.png)
+
    This is directly testable in the system, and it holds. Replacing
    the fingertip with a second log-polar eye, the same 128×128 camera
    read as an eye rather than a finger and a different sensor in the
@@ -405,7 +411,7 @@ the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
    manufacture agreement, and the consensus mechanism, which reads
    agreement as confidence, reports its false verdict with the same
    assurance it reports its true ones. The humility of the federation
-   was never in the count of its sensors; it was in the fact that
+   was never in the count of its sensors. It was in the fact that
    they could not be wrong together.
 
 ## 7. Echolocation, and the case for moving the sensor
@@ -494,8 +500,9 @@ describes this work exactly, and we mean that as a finding rather
 than a disclaimer. The systems above recognize objects, localize
 themselves, refuse impostors, and register dissent, and at no point
 does anything in them understand anything. The learning module that
-recovered a 30° rotation it was never told about contains no
-concept of rotation; it is displacement bookkeeping over a graph.
+recovered a 30° rotation it was never told about has no concept of
+rotation. What it has is excellent displacement bookkeeping over a
+graph.
 The veto that behaves like skepticism is a threshold on a ratio of
 two accumulators. The consensus rule that behaves like judicial
 caution is a counter and a string comparison. Dennett's claim is
