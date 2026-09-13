@@ -3,3 +3,7 @@ tbp.monty/
 # paper skeleton stays local; figures and baseline ship (the Discord
 # post promises them)
 paper/
+
+# paper kept local, not published to the repo for now
+docs/improving_the_brain_without_touching_it.md
+docs/The_Full_Monty_Bodies_Exposed.pdf
