@@ -184,13 +184,47 @@ recognition degrades, most of the metric eye's scale failures
 collapsing to the mug, the round attractor of Section 3, now visible
 across many objects at once. The set was curated to compact shapes
 after the thirteenth object, the adjustable wrench, exposed a
-degeneracy worth naming: a thin, straight object produces a log-polar
+degeneracy worth naming. A thin, straight object produces a log-polar
 graph that is both planar and nearly collinear, with no defined
 three-dimensional orientation, and the learning module's pose search
-returns a null frame. The log-polar sensor, whose location has no
-depth axis, composes cleanly with the module's SO(3) pose estimation
-for compact objects and fails for one-dimensional ones. The hand,
-reading curvature in true depth, is the sensor that shape belongs to.
+returns a null frame. In the run this surfaces as an error, which is
+the wrong response and the shallow reading of the result. The right
+response is the one the rest of this paper argues for. A frame that
+meets a shape it cannot orient should not guess and should not fail
+silently. It should mark the object as one it cannot resolve, a known
+unknown, and refer it to a band that can, which for shape is the hand
+reading curvature in true depth. That is the withheld verdict of
+Section 5 turned inward, a sensor declining to vouch for its own
+percept.
+
+What makes this interesting is not that the system can flag the gap
+but how the gap is what lets it improve. A known unknown is an
+address. It tells the federation exactly where its current
+representation runs out and which band to recruit next, so the wrench
+is not a failure to be hidden but the first entry in a curriculum the
+system writes for itself. A recognizer that learns only from its
+successes has no signal for where to grow. One that records where it
+could not orient, could not hear the expected tower, could not break
+a tie, is pointed straight at its own frontier. The log-polar frame
+composing cleanly with SO(3) pose for compact objects and reaching
+its edge on one-dimensional ones is not only a limit of the sensor.
+It is the sensor telling the system what to learn.
+
+The loop that follows is the point. The hand resolves what the eye
+could not, the object enters memory as a thing known through
+curvature, and the federation records which band owns which shape, so
+the next thin object is flagged by the eye and decided by the hand
+without a stumble. The frontier has moved outward by one shape-class,
+and it moved because the failure carried an address. Iterated, this
+retires blind spots one band at a time, each marked failure naming
+the band to recruit next, and what the system can do grows as the
+union across its senses without a curriculum written by hand. The
+residue is what matters. Whatever survives every band, the thing no
+current sense can vouch for, is the true unknown, and that alone is
+the case that demands something new, a fresh sensor, a new frame, or
+a question to a person. Everything before it is routing. A system
+built this way improves not by being right more often but by being
+wrong in a way it can point at.
 
 ![Figure 11. Both eyes across twelve compact objects. The log-polar
 eye's edge over the metric eye survives past two objects; the perfect
@@ -686,11 +720,19 @@ sensors that fail in partly overlapping ways, is untested, and the
 formally. We do not define a band quantitatively or measure the
 error correlation between the modules, so the crossover is an
 explanation the data are consistent with, not one the data compel.
-The falsifiers of Section 6 each move one variable. The
-anisotropic stretch was run at a single ratio (1.7x, survived) with
-no search for the ratio at which recognition breaks, and the
-alternate flight path at a single radius. Both invite a sweep this
-study did not run.
+The falsifiers of Section 6 were then swept rather than left at a
+single point. The anisotropic stretch was run from 1.3x to 3.5x and
+the log-polar eye recognized the objects throughout, so no breaking
+ratio exists in that range and the eye's blindness to the stretch is
+robust, not a lucky single value. The alternate flight path was run
+across patrol radii from 0.6 to 0.8 against a trained radius of 1.1,
+and here the result is genuinely partial. The rooms are still
+recognized at 0.8 and 0.7, but at 0.6 the yard is misread as the
+grove, the two ego-clouds having diverged far enough from the
+learned path to confuse the two rooms. Place recognition survives a
+moderate change of route and fails at a large one, which bounds the
+"pose is where you stand" claim to paths near the one the room was
+learned from.
 
 ## 10. Questions for the maintainers
 
