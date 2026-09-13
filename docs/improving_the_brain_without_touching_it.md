@@ -43,6 +43,12 @@ object whose recognized pose is the agent's own location within it,
 and a moving head recovers, from the ears alone, an elevation that a
 stationary head cannot resolve. We discuss the implications for
 termination, cross-modal voting, and the representation of absence.
+A stress test shows the consensus mechanism inverts under correlated
+error — the population agrees most tightly when it is most wrong —
+which we read through the senses as a band-limited crossover:
+independence of witnesses is separation of physical bands, and the
+value of the three-module system was that its errors could not
+correlate.
 
 **Scope.** This document covers the work of 2026-09-12: the retinal
 and tactile sensors, the representation comparison, the termination
@@ -283,6 +289,30 @@ accumulating evidence for the humming mug, but has not yet reached
 its own terminal state, holds evidence well above the fraction and
 does not veto.
 
+**A stress test: the premise of independence.** Both modifications
+rest, unstated, on an assumption: that the modules err
+independently. Consensus averages away error and disagreement
+tracks accuracy only when the errors are uncorrelated. We tested the
+assumption directly. N observers estimate one target under two
+regimes: independent bearing error drawn per observer, and
+correlated error in which the observers share a common bias plus a
+small private component. Under independence the consensus error
+falls with N as expected (105 cm at N=2 to 34 cm at N=32, over 200
+draws) and the observers' disagreement stays large and honest
+(~185 cm). Under correlation the consensus error does not fall at
+all (it plateaus near 127 cm; thirty-two observers are no better
+than two) and the disagreement collapses (~44 cm): the observers
+agree four times more tightly while being roughly twice as wrong
+(Figure 6). A criterion that reads low disagreement as high
+confidence — which is what the consensus rule does — is therefore
+most confident in precisely the case where the whole population is
+wrong together. Correlation does not merely neutralize consensus; it
+inverts it into a confidence amplifier for a shared error.
+
+![Figure 6. Folie à deux: independent errors spread around the
+truth and average close; a shared bias produces a tight cluster off
+the truth. Agreement is not accuracy.](../figures/folie_a_deux_3d.png)
+
 ## 6. Interpretation
 
 1. **Termination is doing theoretical work.** The failures of
@@ -329,6 +359,42 @@ does not veto.
    the level of cross-modal aggregation rather than in any improved
    single sensor.
 
+5. **Independence is band separation, and the senses are a
+   crossover.** Point 4 sends the remedy to cross-modal aggregation,
+   and the stress test above says aggregation only helps when the
+   aggregated channels fail independently. These two combine into
+   the account of why the three-module system worked at all, which
+   the engineering did not state. The value of the triad was never
+   three witnesses; it was three witnesses with different failure
+   modes, and that was obtained for free by choosing three different
+   organs. A world is a single physical field, and an organ is a
+   band-pass filter on it: the eye passes a spatial band in which a
+   bowl and a mug are the same ring, the hand passes a curvature
+   band in which they are not, the ear passes a spectral band in
+   which one hums and the other is silent. Errors in different bands
+   cannot correlate, because the signal that would carry the
+   correlation does not cross between bands; a ring that fools the
+   eye has no channel by which to also fool the fingertip. The
+   independence that consensus requires is, physically, this band
+   separation. Two sensors in the same band are one witness with two
+   names — two log-polar eyes agree on the bowl, and add confidence
+   without adding accuracy — which is the failure mode of the
+   preceding point, and the mechanism of the echo chamber, restated
+   as engineering. The design rule follows: a sensor earns a seat in
+   the federation only by failing differently from those already
+   seated, that is, by occupying a band no seated sensor occupies.
+   The anisotropic-stretch probe (an object scaled on one axis
+   only, recognized by the log-polar eye all the same) is the same
+   point from
+   the far side: the log-polar eye recognizes a stretched object not
+   because it is invariant to the stretch but because the stretch is
+   written in a band the eye does not read, and the organ that would
+   catch it is the hand. This is, as far as we can tell, why
+   evolution built the senses as a crossover — so that when one band
+   is deceived, another stands in a band the deception cannot
+   reach — and it is the condition under which the humility result
+   of Section 5 is true rather than lucky. [6, 13]
+
 ## 7. Echolocation, and the case for moving the sensor
 
 A fourth sensor was built to a different brief. The three above
@@ -359,14 +425,14 @@ recognized on a fresh flight; and when the agent entered a learned
 room at a different point of the patrol, the room was still
 recognized, and the pose the learning module reported was the
 agent's actual point of entry, recovered to within about nine
-degrees (Figure 6). Recognition and self-localization are here a
+degrees (Figure 7). Recognition and self-localization are here a
 single act: to know the room is to know where in it you stand. The
 one probe room, a corridor never flown, was misidentified as a
 learned room at some rotation, for the reason established in
 Section 6.4: a straight wall matches a straight wall, and straight
 walls are the degenerate objects of places.
 
-![Figure 6. Rooms as objects: echoes recorded in the entry-pose
+![Figure 7. Rooms as objects: echoes recorded in the entry-pose
 frame, and a room recognized from a novel entry whose detected
 rotation recovers the point of entry.](../figures/rooms_as_objects.png)
 
@@ -379,10 +445,10 @@ horizontal plane, an agent whose head does not move is blind in
 precisely the dimension the target is escaping into. Simulated as a
 pursuit the disadvantage is total: a climbing target is lost on
 every trial, the pursuer holding the correct azimuth while the
-target leaves along the one axis the ears cannot resolve (Figure 7,
+target leaves along the one axis the ears cannot resolve (Figure 8,
 left).
 
-![Figure 7. With the head held level, a climbing target escapes on
+![Figure 8. With the head held level, a climbing target escapes on
 every trial (left); rolling the head between chirps supplies the
 missing dimension and the pursuit succeeds (right).](../figures/night_hunt.png)
 
@@ -394,7 +460,7 @@ second cone; two cones intersect, generically, in one forward
 direction, and the elevation the level head could not measure is
 recovered from the ears alone, with no appeal to vision. The same
 climbing target that escaped without fail is caught on every trial,
-in roughly ten chirps (Figure 8). The movement that supplies the
+in roughly ten chirps (Figure 9). The movement that supplies the
 elevation is the same movement that would aim a visual field and a
 directional gain at the target: pointing the head is one motor act
 serving every sensor on the skull, and the recognition it enables
@@ -404,7 +470,7 @@ scale. The movement is the only way to obtain evidence of a kind a
 stationary sensor cannot reach, in a dimension no amount of
 listening from one posture would ever supply.
 
-![Figure 8. Ten pursuits with a level head (top row) and ten with
+![Figure 9. Ten pursuits with a level head (top row) and ten with
 the head rolling between chirps (bottom row): elevation, and the
 capture, come only with the movement.](../figures/head_tilt.png)
 
@@ -631,3 +697,7 @@ Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
     the Meanings of Life*. Simon & Schuster. (Universal acid.)
 12. Hawkins, J., with Blakeslee, S. (2004). *On Intelligence*.
     Times Books. (Epigraph.)
+13. de Condorcet, N. (1785). *Essai sur l'application de l'analyse à
+    la probabilité des décisions rendues à la pluralité des voix.*
+    (The jury theorem: majority accuracy rises with the number of
+    voters only when the voters err independently.)
