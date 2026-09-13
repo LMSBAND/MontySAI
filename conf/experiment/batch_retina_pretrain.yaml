@@ -1,0 +1,31 @@
+# @package _global_
+defaults:
+  - /monty: graph_exp1000_e3_t3
+  - /monty/motor_system_config: naive_scan_1
+  - /monty/learning_module: displacement_1lm
+  - /monty/sensor_module: retina
+  - /monty/connectivity: 1lm_1retina
+  - /environment: audio_mujoco_retina
+  - /env_interface: batch_train
+  - /env_interface/transform: none
+  - /logging: silent_warning_train
+experiment:
+  _target_: tbp.monty.frameworks.experiments.pretraining_experiments.MontySupervisedObjectPretrainingExperiment
+  config:
+    show_sensor_output: false
+    max_train_steps: 40
+    max_eval_steps: 10
+    max_total_steps: 200
+    n_train_epochs: 1
+    n_eval_epochs: 1
+    model_name_or_path: ""
+    match_criterion:
+      _target_: tbp.monty.experiment.match_criteria.AnyLMsMatch
+      count: 1
+    seed: 42
+    supervised_lm_ids: all
+    logging:
+      run_name: batch_retina_pretrain
+    monty_config:
+      monty_args:
+        num_exploratory_steps: 40

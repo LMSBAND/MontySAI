@@ -87,7 +87,9 @@ class MontyConsensus(MontyForEvidenceGraphMatching):
         return True
 
     # ------------------------------------------------------------------
-    VETO_FRAC = 0.25   # the witness's tower must reach at least this
+    import os as _os
+    VETO_FRAC = float(_os.environ.get("MONTY_VETO_FRAC", "0.25"))
+                       # the witness's tower must reach at least this
                        # fraction of the supporters' -- absence is
                        # RELATIVE ("it's not making a sound COMPARED
                        # to the sound that is present")
