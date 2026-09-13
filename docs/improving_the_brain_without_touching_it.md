@@ -629,17 +629,35 @@ words, that is what was built here.
 
 ## 9. Limitations
 
-The object set is two learned and three probe objects; none of the
-quantitative results should be assumed to generalize beyond it. The
-fixation policy uses the depth map to locate the object,
-a segmentation the sensors do not earn (the reference pipeline uses
-the semantic channel for the same purpose, a stronger oracle; the
-comparison of Section 2 is therefore internally consistent). CamSM
-has not been validated against the reference class on its native
-benchmark. The veto fraction (0.25) was set once and not swept. The
-consensus modifications are implemented at the termination decision
-because that is the available socket; we argue below they belong in
-the voting protocol.
+The object set is two learned and three probe objects, and the room
+set two learned and one probe. None of the quantitative results
+should be assumed to generalize beyond them. The fixation policy uses
+the depth map to locate the object, a segmentation the sensors do not
+earn. The reference pipeline uses the semantic channel for the same
+purpose, a stronger oracle, so the comparison of Section 2 stays
+internally consistent. CamSM has not been validated against the
+reference class on its native benchmark. The veto fraction (0.25) was
+set once and not swept. The consensus modifications live at the
+termination decision because that is the available socket. We argue
+below they belong in the voting protocol.
+
+The stress test of Section 5 is a stand-in, not a measurement of the
+Monty modules themselves. It draws correlated and independent errors
+from a simple generative model rather than from the sensors, so it
+shows that consensus requires independence, not what the actual
+correlation between our three organs is. The two-eye conviction of
+Section 6 is the opposite extreme, two identical deterministic eyes
+whose error correlation is exactly one. The interesting middle, real
+sensors that fail in partly overlapping ways, is untested, and the
+"band" of the crossover account is used physically rather than
+formally. We do not define a band quantitatively or measure the
+error correlation between the modules, so the crossover is an
+explanation the data are consistent with, not one the data compel.
+The falsifiers of Section 6 each move one variable. The
+anisotropic stretch was run at a single ratio (1.7x, survived) with
+no search for the ratio at which recognition breaks, and the
+alternate flight path at a single radius. Both invite a sweep this
+study did not run.
 
 ## 10. Questions for the maintainers
 
