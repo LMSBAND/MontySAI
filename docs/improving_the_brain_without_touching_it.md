@@ -165,12 +165,36 @@ rotation. The out-of-plane conditions had been registered in
 advance as the expected advantage of the metric representation,
 since a log-polar frame has no depth axis. The metric recipe
 instead declined all four, and the log-polar recipe identified all
-four (Figure 3). We do not claim this generalizes beyond the two
-objects tested.
+four (Figure 3).
 
 ![Figure 3. The representation comparison at stock configuration:
 12 of 12 against 5 of 12, no false identifications on the learned
 set.](../figures/eye_vs_eye.png)
+
+To see how far the comparison travels, both eyes then learned twelve
+compact YCB objects (mug, banana, apple, bowl, baseball, cracker box,
+mustard bottle, orange, pear, lemon, gelatin box, potted meat can)
+and were tested under each transform (Figure 11). Upright, both
+identify all twelve. Under every transform the log-polar eye beats
+the metric eye: 8 of 12 against 3 at 1.5x scale, 9 against 7 rotated,
+6 against 4 tilted. The direction of the two-object result therefore
+generalizes. The magnitude does not. The perfect scores were a
+property of the two-object set, and on a dozen confusable objects
+recognition degrades, most of the metric eye's scale failures
+collapsing to the mug, the round attractor of Section 3, now visible
+across many objects at once. The set was curated to compact shapes
+after the thirteenth object, the adjustable wrench, exposed a
+degeneracy worth naming: a thin, straight object produces a log-polar
+graph that is both planar and nearly collinear, with no defined
+three-dimensional orientation, and the learning module's pose search
+returns a null frame. The log-polar sensor, whose location has no
+depth axis, composes cleanly with the module's SO(3) pose estimation
+for compact objects and fails for one-dimensional ones. The hand,
+reading curvature in true depth, is the sensor that shape belongs to.
+
+![Figure 11. Both eyes across twelve compact objects. The log-polar
+eye's edge over the metric eye survives past two objects; the perfect
+scores do not.](../figures/object_generalization.png)
 
 ## 3. Probes with unlearned objects
 
@@ -259,10 +283,14 @@ transient. The operative test is therefore relative. A module
 vetoes the verdict when three conditions hold: it is functioning
 (its sensor is not disabled); it possesses a learned graph for the
 candidate object; and its evidence for that candidate sits below a
-fixed fraction (0.25) of the mean evidence of the supporting
-modules. On the apple, the
-auditory module held 1.08 against supporting evidence of 6 to 11,
-and the identification was blocked.
+fraction of the mean evidence of the supporting modules. On the
+apple, the auditory module held 1.08 against supporting evidence of
+6 to 11, and the identification was blocked. The fraction is not a
+tuned edge. Sweeping it from 0.10 to 0.40 leaves the foils blocked
+in every case, because the gap between the auditory module's
+startup crumbs and the supporting evidence spans an order of
+magnitude and any threshold inside that gap decides the same way. We
+report 0.25 as the midpoint of a wide basin, not as a fitted value.
 
 Across the three criteria (stock, consensus, consensus with the
 expected-signal test) the false identifications on the probe set
@@ -629,17 +657,22 @@ words, that is what was built here.
 
 ## 9. Limitations
 
-The object set is two learned and three probe objects, and the room
-set two learned and one probe. None of the quantitative results
-should be assumed to generalize beyond them. The fixation policy uses
-the depth map to locate the object, a segmentation the sensors do not
+The visual comparison of Section 2 now spans twelve compact objects,
+and its direction holds there, but the verdict-machinery findings of
+Sections 4 through 6 still rest on two learned and three probe
+objects, and the room results on two learned and one probe. None of
+those quantitative results should be assumed to generalize beyond
+their sets. The object generalization is itself only partial. It
+covers compact shapes, and the log-polar frame degenerates on thin
+straight ones (Section 2), so the twelve were curated and a fully
+representative object set is untested. The fixation policy uses the
+depth map to locate the object, a segmentation the sensors do not
 earn. The reference pipeline uses the semantic channel for the same
 purpose, a stronger oracle, so the comparison of Section 2 stays
 internally consistent. CamSM has not been validated against the
-reference class on its native benchmark. The veto fraction (0.25) was
-set once and not swept. The consensus modifications live at the
-termination decision because that is the available socket. We argue
-below they belong in the voting protocol.
+reference class on its native benchmark. The consensus modifications
+live at the termination decision because that is the available
+socket. We argue below they belong in the voting protocol.
 
 The stress test of Section 5 is a stand-in, not a measurement of the
 Monty modules themselves. It draws correlated and independent errors
@@ -707,12 +740,16 @@ uv run python run.py experiment=rooms_eval \
 uv run python run.py experiment=twoeye_pretrain
 uv run python run.py experiment=twoeye_eval \
     env_interface=retina_eval_foils      # two same-band eyes convict
+
+# Generalization and knob sweeps (Section 2, Section 5)
+bash experiments/batch_eyes_curated.sh   # 12 objects, both eyes, 4 transforms
+bash experiments/overnight_battery.sh    # veto / stretch / radius sweeps
 ```
 
 Figures: `figures/triad.png`, `figures/eye_vs_eye.png`,
 `figures/where_refusal_lives.png`,
 `figures/novelty_by_disagreement.png`, `figures/real_sonar.png`,
-`figures/folie_a_deux_3d.png`.
+`figures/folie_a_deux_3d.png`, `figures/object_generalization.png`, `figures/stretch_two_bands_3d.png`.
 
 ## References
 
