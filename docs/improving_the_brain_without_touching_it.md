@@ -725,14 +725,17 @@ single point. The anisotropic stretch was run from 1.3x to 3.5x and
 the log-polar eye recognized the objects throughout, so no breaking
 ratio exists in that range and the eye's blindness to the stretch is
 robust, not a lucky single value. The alternate flight path was run
-across patrol radii from 0.6 to 0.8 against a trained radius of 1.1,
-and here the result is genuinely partial. The rooms are still
-recognized at 0.8 and 0.7, but at 0.6 the yard is misread as the
-grove, the two ego-clouds having diverged far enough from the
-learned path to confuse the two rooms. Place recognition survives a
-moderate change of route and fails at a large one, which bounds the
-"pose is where you stand" claim to paths near the one the room was
-learned from.
+across patrol radii from 0.6 to 1.3 against a trained radius of 1.1,
+and here the result is genuinely partial and splits by room. The
+grove, a scatter of posts, is recognized at every radius. The yard,
+whose layout is a wall with a door, is recognized only near the
+trained path (0.7 and 0.8) and elsewhere is either misread as the
+grove or refused. Place recognition is robust for a scattered layout
+and fragile for a wall-dominated one, which is Section 6.4 seen once
+more. A wall is the degenerate object of places, and a wall observed
+from a path far from the learned one is confusable with any other
+wall, so the "pose is where you stand" claim holds most strongly for
+rooms whose structure is not itself degenerate.
 
 ## 10. Questions for the maintainers
 
